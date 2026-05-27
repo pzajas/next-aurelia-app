@@ -259,7 +259,7 @@ function GalleryLightbox({
       <button
         type="button"
         onClick={onClose}
-        className="absolute right-5 top-5 font-sans text-[9px] uppercase tracking-[0.42em] text-white/45 transition-colors duration-300 hover:text-white/70 md:right-8 md:top-8"
+        className="absolute right-5 top-5 font-sans text-[12px] uppercase tracking-[0.42em] text-white/45 transition-colors duration-300 hover:text-white/70 md:right-8 md:top-8"
       >
         {closeLabel}
       </button>
@@ -353,9 +353,10 @@ function PhotoTile({
           alt={alt}
           fill
           sizes={sizes}
-          unoptimized
+          quality={80}
           priority={tile.priority}
           loading={tile.priority ? "eager" : "lazy"}
+          fetchPriority={tile.priority ? "high" : "auto"}
           className="object-cover"
           style={{ objectPosition: tile.objectPosition }}
         />
@@ -374,7 +375,7 @@ function PhotoTile({
         <motion.p
           variants={captionVariants}
           transition={hoverTransition}
-          className="pointer-events-none absolute bottom-3 left-3 z-10 font-sans text-[7px] uppercase tracking-[0.5em] text-white/62"
+          className="pointer-events-none absolute bottom-3 left-3 z-10 font-sans text-[12px] uppercase tracking-[0.5em] text-white/62"
         >
           {label}
         </motion.p>
@@ -389,7 +390,7 @@ function QuoteTile({ line1, line2, span }: { line1: string; line2: string; span:
       className="flex min-h-0 flex-col items-center justify-center bg-[#0a0a0a] px-4 py-6 text-center"
       style={{ gridColumn: span.col, gridRow: span.row }}
     >
-      <p className="max-w-[min(18rem,90%)] font-serif text-[clamp(0.82rem, 1.3vw, 1.08rem)] font-light italic leading-[1.52] text-white/[0.88]">
+      <p className="max-w-[min(22rem,92%)] font-serif text-[clamp(1.3rem,2.6vw,1.9rem)] font-light italic leading-[1.48] text-white/[0.88]">
         {line1}
         <br />
         {line2}
@@ -412,7 +413,7 @@ export default function Gallery() {
       id="works"
       intenseGrain
       className="py-16 md:py-20"
-      contentClassName="mx-auto w-full max-w-[1280px] px-5 md:px-8"
+      contentClassName="mx-auto w-full max-w-[1280px] px-10 md:px-10"
     >
       <motion.div
         initial={{ opacity: 0 }}
@@ -422,18 +423,18 @@ export default function Gallery() {
       >
         <header className="mb-10 flex items-start justify-between md:mb-12">
           <div className="space-y-1">
-            <p className="font-sans text-[9px] uppercase tracking-[0.42em] text-white/36">
+            <p className="font-sans text-[12px] uppercase tracking-[0.42em] text-white/36">
               {t(copy.gallery.brand)}
             </p>
-            <p className="font-sans text-[8px] uppercase tracking-[0.36em] text-white/26">
+            <p className="font-sans text-[12px] uppercase tracking-[0.36em] text-white/26">
               {t(copy.gallery.atelier)}
             </p>
           </div>
           <div className="space-y-1 text-right">
-            <p className="font-sans text-[9px] uppercase tracking-[0.42em] text-white/36">
+            <p className="font-sans text-[12px] uppercase tracking-[0.42em] text-white/36">
               {t(copy.gallery.selectedWorks)}
             </p>
-            <p className="font-sans text-[8px] uppercase tracking-[0.36em] text-white/26">
+            <p className="font-sans text-[12px] uppercase tracking-[0.36em] text-white/26">
               {t(copy.gallery.volume)}
             </p>
           </div>
@@ -500,11 +501,11 @@ export default function Gallery() {
         <footer className="mt-10 flex items-end justify-between md:mt-12">
           <a
             href="#works"
-            className="font-sans text-[8px] uppercase tracking-[0.38em] text-white/36 underline decoration-white/18 decoration-1 underline-offset-[5px] transition-colors duration-500 hover:text-white/50"
+            className="font-sans text-[12px] uppercase tracking-[0.38em] text-white/36 underline decoration-white/18 decoration-1 underline-offset-[5px] transition-colors duration-500 hover:text-white/50"
           >
             {t(copy.gallery.viewAll)}
           </a>
-          <p className="hidden font-sans text-[8px] uppercase tracking-[0.38em] text-white/26 md:block">
+          <p className="hidden font-sans text-[12px] uppercase tracking-[0.38em] text-white/26 md:block">
             {t(copy.gallery.themes)}
           </p>
         </footer>

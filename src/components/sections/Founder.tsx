@@ -11,7 +11,7 @@ import {
     useTransform,
 } from "framer-motion";
 import Image from "next/image";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 const easeLuxury = [0.22, 1, 0.36, 1] as const;
 const easeEditorial = [0.19, 1, 0.22, 1] as const;
@@ -144,7 +144,7 @@ function TeamMemberContent({
               }
             : motionConfig.item
         }
-        className="text-[8px] font-sans uppercase tracking-[0.55em] text-foreground/38 mb-10"
+        className="text-[12px] font-sans uppercase tracking-[0.55em] text-foreground/38 mb-10"
       >
         {member.label}
       </motion.p>
@@ -190,7 +190,7 @@ function TeamMemberContent({
 
       <motion.p
         variants={motionConfig.item}
-        className="font-sans text-[10px] uppercase tracking-[0.3em] text-foreground/40 mt-8"
+        className="font-sans text-[12px] uppercase tracking-[0.3em] text-foreground/40 mt-8"
       >
         — {member.signature}
       </motion.p>
@@ -202,6 +202,11 @@ export default function Founder() {
   const { t, copy } = useLocale();
   const sectionRef = useRef<HTMLElement>(null);
   const inView = useInView(sectionRef, { once: true, margin: "-10% 0px" });
+  const [founderIsLcp, setFounderIsLcp] = useState(false);
+
+  useLayoutEffect(() => {
+    setFounderIsLcp(window.location.hash === "#atelier");
+  }, []);
   const [sectionEntered, setSectionEntered] = useState(false);
   const [playedSectionReveal, setPlayedSectionReveal] = useState(false);
   const [active, setActive] = useState(0);
@@ -239,11 +244,23 @@ export default function Founder() {
   }, [sectionEntered, playedSectionReveal]);
 
   useEffect(() => {
-    teamNames.forEach((person) => {
-      const img = new window.Image();
-      img.src = person.image;
-    });
-  }, []);
+    if (!founderIsLcp) return;
+    const href = teamNames[0].image;
+    if (document.querySelector('link[data-preload-founder-lcp]')) return;
+    const link = document.createElement("link");
+    link.rel = "preload";
+    link.as = "image";
+    link.href = href;
+    link.setAttribute("data-preload-founder-lcp", "");
+    document.head.appendChild(link);
+  }, [founderIsLcp]);
+
+  useEffect(() => {
+    if (!sectionEntered) return;
+    const nextIndex = (active + 1) % teamNames.length;
+    const img = new window.Image();
+    img.src = teamNames[nextIndex].image;
+  }, [active, sectionEntered]);
 
   const goTo = useCallback((index: number) => {
     setActive((index + teamNames.length) % teamNames.length);
@@ -268,35 +285,35 @@ export default function Founder() {
       onFocusCapture={() => setPaused(true)}
       onBlurCapture={() => setPaused(false)}
     >
-      {/* Full-width background image */}
+      {/* Only the active slide is mounted — avoids lazy hidden images becoming LCP */}
       <div className="absolute inset-0">
-        {teamNames.map((person, index) => (
+        <AnimatePresence initial={false}>
           <motion.div
-            key={person.image + index}
-            animate={{
-              opacity: index === active ? 1 : 0,
-              scale: index === active ? 1 : 1.02,
-            }}
+            key={teamNames[active].image}
+            initial={{ opacity: 0, scale: 1.02 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.02 }}
             transition={switchTransition}
             className="absolute inset-0"
-            aria-hidden={index !== active}
           >
             <Image
-              src={person.image}
-              alt={index === active ? member.name : ""}
+              src={teamNames[active].image}
+              alt={member.name}
               fill
-              priority={index === 0}
+              priority={founderIsLcp}
+              loading="eager"
+              fetchPriority={founderIsLcp ? "high" : "auto"}
               className="object-cover object-[65%_35%] grayscale"
-              sizes="100vw"
+              sizes="(max-width: 1200px) 100vw, 1200px"
             />
           </motion.div>
-        ))}
+        </AnimatePresence>
       </div>
 
       {/* Text overlay on the left */}
       <motion.div
         style={{ y: parallaxY }}
-        className="relative z-10 max-w-7xl mx-auto px-10 md:px-16 lg:px-20 py-28 md:py-36 lg:py-44"
+        className="relative z-10 max-w-7xl mx-auto px-10 md:px-10 lg:px-10 py-28 md:py-36 lg:py-44"
       >
         <motion.div
           initial={{ opacity: 0, x: -12 }}

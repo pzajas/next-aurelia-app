@@ -9,14 +9,14 @@ export default function Manifesto() {
 
   return (
     <section className="py-32 md:py-64 bg-foreground text-background relative z-10" ref={ref}>
-      <div className="max-w-[1400px] mx-auto px-6 md:px-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-16">
+      <div className="max-w-[1400px] mx-auto px-10 md:px-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-16">
         <motion.div
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : { opacity: 0 }}
           transition={{ duration: 1 }}
           className="w-full md:w-1/4"
         >
-          <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-background/50 border-t border-background/20 pt-4">
+          <p className="font-sans text-[12px] uppercase tracking-[0.3em] text-background/50 border-t border-background/20 pt-4">
             The Director's Vision
           </p>
         </motion.div>

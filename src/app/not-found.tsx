@@ -16,7 +16,7 @@ export default function NotFound() {
 
         <Link
           href="/"
-          className="mt-6 inline-block text-[10px] font-sans uppercase tracking-[0.35em] text-foreground hover:opacity-60 transition-opacity"
+          className="mt-6 inline-block text-[12px] font-sans uppercase tracking-[0.35em] text-foreground hover:opacity-60 transition-opacity"
         >
           Back to Aurelia
         </Link>

@@ -1,14 +1,22 @@
-import Booking from "@/components/sections/Booking";
-import DirectorManifesto from "@/components/sections/DirectorManifesto";
-import Footer from "@/components/sections/Footer";
-import Founder from "@/components/sections/Founder";
-import Gallery from "@/components/sections/Gallery";
+import dynamic from "next/dynamic";
 import Hero from "@/components/sections/Hero";
-import PrestigeMetrics from "@/components/sections/PrestigeMetrics";
-import Products from "@/components/sections/Products";
-import Services from "@/components/sections/Services";
-import Testimonial from "@/components/sections/Testimonial";
 
+const PrestigeMetrics = dynamic(
+  () => import("@/components/sections/PrestigeMetrics")
+);
+const Founder = dynamic(() => import("@/components/sections/Founder"));
+const DirectorManifesto = dynamic(
+  () => import("@/components/sections/DirectorManifesto")
+);
+const Services = dynamic(() => import("@/components/sections/Services"));
+const Gallery = dynamic(() => import("@/components/sections/Gallery"));
+const Testimonial = dynamic(() => import("@/components/sections/Testimonial"));
+const Products = dynamic(() => import("@/components/sections/Products"));
+const Booking = dynamic(() => import("@/components/sections/Booking"));
+const ClosingManifesto = dynamic(
+  () => import("@/components/sections/ClosingManifesto")
+);
+const Footer = dynamic(() => import("@/components/sections/Footer"));
 
 export default function Home() {
   return (
@@ -35,6 +43,7 @@ export default function Home() {
       <section id="contact" className="scroll-mt-[var(--site-header-height,68px)]">
         <Booking />
       </section>
+      <ClosingManifesto />
       <Footer />
     </main>
   );

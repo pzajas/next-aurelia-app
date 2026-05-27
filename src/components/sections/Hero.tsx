@@ -33,30 +33,22 @@ export default function Hero() {
       id="hero"
       className="relative h-screen w-full -mt-[88px] bg-[#020202] overflow-hidden"
     >
-      <div
-        className="absolute inset-0"
-        style={{
-          opacity: mediaReady ? 1 : 0,
-          transform: mediaReady ? "scale(1) translateZ(0)" : "scale(1.04) translateZ(0)",
-          transition: "opacity 1.2s cubic-bezier(0.22,1,0.36,1), transform 2.5s cubic-bezier(0.05,0.8,0.2,1)",
-          willChange: "transform, opacity",
-        }}
-      >
+      <div className="absolute inset-0">
         <Image
           src={media.hero.src}
           alt="Aurelia"
           fill
           priority
-          unoptimized
           loading="eager"
           fetchPriority="high"
+          quality={80}
           className="object-contain object-[72%_center] grayscale contrast-[1.06] brightness-[1.02]"
-          sizes="100vw"
+          sizes="(max-width: 1200px) min(100vw, 1200px), 725px"
           onLoad={() => setImageLoaded(true)}
         />
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 z-20 px-8 md:px-16 pb-12 md:pb-20 pt-24">
+      <div className="absolute bottom-0 left-0 right-0 z-20 px-10 md:px-10 pb-12 md:pb-20 pt-24">
         <div
           style={{
             opacity: mediaReady ? 1 : 0,
@@ -65,7 +57,7 @@ export default function Hero() {
             transition: "opacity 1.2s cubic-bezier(0.16,1,0.3,1) 1.8s, transform 1.2s cubic-bezier(0.16,1,0.3,1) 1.8s, clip-path 1.2s cubic-bezier(0.16,1,0.3,1) 1.8s",
             willChange: "transform, opacity, clip-path",
           }}
-          className="text-[9px] font-sans uppercase text-white/50 mb-4 tracking-[0.42em]"
+          className="text-[12px] font-sans uppercase text-white/50 mb-4 tracking-[0.42em]"
         >
           {t(copy.hero.edition)}
         </div>
@@ -104,7 +96,7 @@ export default function Hero() {
             transition: "opacity 1.2s cubic-bezier(0.16,1,0.3,1) 2.7s, transform 1.2s cubic-bezier(0.16,1,0.3,1) 2.7s, clip-path 1.0s cubic-bezier(0.16,1,0.3,1) 2.7s",
             willChange: "transform, opacity, clip-path",
           }}
-          className="text-[8px] font-sans uppercase tracking-[0.45em] text-white/45 mt-4"
+          className="text-[12px] font-sans uppercase tracking-[0.45em] text-white/45 mt-4"
         >
           {t(copy.hero.subtitle)}
         </p>
@@ -115,7 +107,7 @@ export default function Hero() {
           opacity: mediaReady ? 1 : 0,
           transition: "opacity 1s cubic-bezier(0.16,1,0.3,1) 3.0s",
         }}
-        className="absolute bottom-8 right-8 z-20 hidden md:block text-[8px] font-sans uppercase text-white/40 tracking-[0.38em]"
+        className="absolute bottom-8 right-8 z-20 hidden md:block text-[12px] font-sans uppercase text-white/40 tracking-[0.38em]"
       >
         {t(copy.hero.appointmentOnly)}
       </div>

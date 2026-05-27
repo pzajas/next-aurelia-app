@@ -1,14 +1,9 @@
 "use client";
 
-import {
-  motion,
-  useInView,
-  useScroll,
-  useTransform,
-} from "framer-motion";
-import { useEffect, useRef, useState } from "react";
 import CinematicSurface from "@/components/CinematicSurface";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
+import { motion, useInView, useScroll, useTransform } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
 const easeLuxury = [0.22, 1, 0.36, 1] as const;
 
@@ -48,20 +43,15 @@ export default function DirectorManifesto() {
       intenseGrain
       className="border-b border-white/10 editorial-whitespace-xl"
     >
-      <motion.div
-        style={{ y: parallaxY }}
-        className="px-8 py-24 md:py-32"
-      >
+      <motion.div style={{ y: parallaxY }} className="px-10 py-24 md:py-32">
         <div className="mx-auto max-w-3xl text-center">
           <motion.p
             initial={{ opacity: 0, x: -16, letterSpacing: "0.28em" }}
             animate={
-              entered
-                ? { opacity: 1, x: 0, letterSpacing: "0.4em" }
-                : undefined
+              entered ? { opacity: 1, x: 0, letterSpacing: "0.4em" } : undefined
             }
             transition={{ duration: 1.2, ease: easeLuxury }}
-            className="text-[8px] font-sans uppercase text-white/40 mb-14 md:mb-16"
+            className="text-[12px] font-sans uppercase text-white/40 mb-14 md:mb-16"
           >
             {t(copy.manifesto.label)}
           </motion.p>
@@ -94,16 +84,14 @@ export default function DirectorManifesto() {
             initial={{ opacity: 0, y: 10 }}
             animate={entered ? { opacity: 1, y: 0 } : undefined}
             transition={{ duration: 1.1, delay: 0.72, ease: easeLuxury }}
-            className="mt-12 text-[9px] font-sans uppercase tracking-[0.3em] text-white/50 will-change-transform"
+            className="mt-12 text-[12px] font-sans uppercase tracking-[0.3em] text-white/50 will-change-transform"
           >
             {t(copy.manifesto.attribution)}
           </motion.p>
 
           <motion.div
             initial={{ width: 0, opacity: 0 }}
-            animate={
-              entered ? { width: 48, opacity: 1 } : undefined
-            }
+            animate={entered ? { width: 48, opacity: 1 } : undefined}
             transition={{ duration: 1.15, delay: 0.88, ease: easeLuxury }}
             className="h-px bg-white/20 mx-auto mt-14"
           />

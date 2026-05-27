@@ -16,8 +16,8 @@ export default function Products() {
   return (
     <section className="cinematic-section bg-layer-2">
       <motion.div className="cinematic-bloom" aria-hidden />
-      <div className="max-w-6xl mx-auto px-8 pt-24 md:pt-32 pb-20">
-        <div className="text-[8px] font-sans uppercase tracking-[0.4em] text-foreground/40 mb-16">
+      <div className="max-w-6xl mx-auto pt-24 md:pt-32 pb-20">
+        <div className="text-[10px] font-sans uppercase tracking-[0.4em] text-foreground/40 mb-16">
           {t(copy.products.label)}
         </div>
 
@@ -43,7 +43,7 @@ export default function Products() {
               <h3 className="font-serif text-[2rem] text-foreground mt-4">
                 {t(product.name)}
               </h3>
-              <div className="text-[9px] font-sans uppercase text-foreground/50 mt-2">
+              <div className="text-[10px] font-sans uppercase tracking-[0.3em] text-foreground/50 mt-2">
                 {t(product.tagline)}
               </div>
               <div className="w-8 border-t border-foreground/20 mt-4" />

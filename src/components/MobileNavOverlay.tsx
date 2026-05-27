@@ -331,7 +331,7 @@ export default function MobileNavOverlay({
                     alt=""
                     fill
                     className="object-cover object-[center_24%] grayscale contrast-[1.06] brightness-[0.88]"
-                    sizes="100vw"
+                    sizes="(max-width: 1200px) 100vw, 1200px"
                   />
                 </motion.div>
               </div>
@@ -386,7 +386,7 @@ export default function MobileNavOverlay({
                     p.fgCta
                   )}
                 >
-                  <span className="text-[10px] font-sans font-normal uppercase tracking-[0.44em] transition-[opacity,letter-spacing] duration-[640ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:opacity-55 group-hover:tracking-[0.48em] group-active:opacity-72">
+                  <span className="text-[12px] font-sans font-normal uppercase tracking-[0.44em] transition-[opacity,letter-spacing] duration-[640ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:opacity-55 group-hover:tracking-[0.48em] group-active:opacity-72">
                     {ctaLabel}
                   </span>
                   <span
@@ -398,7 +398,7 @@ export default function MobileNavOverlay({
                   />
                   <span
                     className={cn(
-                      "mt-3.5 font-sans text-[8px] uppercase tracking-[0.36em] leading-relaxed",
+                      "mt-3.5 font-sans text-[12px] uppercase tracking-[0.36em] leading-relaxed",
                       p.fgMuted
                     )}
                   >
@@ -410,7 +410,7 @@ export default function MobileNavOverlay({
               <motion.p
                 variants={motionSet.editionVariants}
                 className={cn(
-                  "mt-auto pt-14 font-sans text-[7px] uppercase tracking-[0.42em]",
+                  "mt-auto pt-14 font-sans text-[12px] uppercase tracking-[0.42em]",
                   p.edition
                 )}
               >

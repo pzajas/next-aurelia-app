@@ -51,14 +51,14 @@ export default function CookieConsent() {
             <div className="flex items-center justify-center gap-0">
               <button
                 onClick={preferences}
-                className="font-sans text-[11px] uppercase tracking-[0.2em] text-white/60 hover:text-white/90 transition-colors duration-300 px-6 py-2"
+                className="font-sans text-[12px] uppercase tracking-[0.2em] text-white/60 hover:text-white/90 transition-colors duration-300 px-6 py-2"
               >
                 Preferencje
               </button>
               <span className="h-4 w-px bg-white/20" />
               <button
                 onClick={accept}
-                className="font-sans text-[11px] uppercase tracking-[0.2em] text-white/90 hover:text-white transition-colors duration-300 px-6 py-2"
+                className="font-sans text-[12px] uppercase tracking-[0.2em] text-white/90 hover:text-white transition-colors duration-300 px-6 py-2"
               >
                 Akceptuję
               </button>

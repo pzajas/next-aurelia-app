@@ -1,10 +1,13 @@
 import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, DM_Sans } from "next/font/google";
+import dynamic from "next/dynamic";
 import Script from "next/script";
 import AppChrome from "@/components/AppChrome";
 import SessionIntro from "@/components/SessionIntro";
-import CinematicCursor from "@/components/CinematicCursor";
-import CookieConsent from "@/components/CookieConsent";
+import { media } from "@/lib/media";
+
+const CinematicCursor = dynamic(() => import("@/components/CinematicCursor"));
+const CookieConsent = dynamic(() => import("@/components/CookieConsent"));
 import { IntroRevealProvider } from "@/lib/intro/IntroRevealContext";
 import { LocaleProvider } from "@/lib/i18n/LocaleProvider";
 import { copy, t } from "@/lib/i18n";
@@ -21,7 +24,9 @@ export const viewport: Viewport = {
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
   subsets: ["latin"],
-  weight: ["200", "300", "400", "500"],
+  weight: ["300", "400", "500"],
+  display: "swap",
+  preload: true,
 });
 
 const cormorant = Cormorant_Garamond({
@@ -29,6 +34,8 @@ const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600"],
   style: ["normal", "italic"],
+  display: "swap",
+  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -46,7 +53,15 @@ export default function RootLayout({
       lang={defaultLocale}
       className={`${dmSans.variable} ${cormorant.variable} h-full antialiased`}
     >
-      <body className="min-h-full overflow-x-clip">
+      <head>
+        <link
+          rel="preload"
+          href={media.hero.src}
+          as="image"
+          type="image/avif"
+        />
+      </head>
+      <body className="min-h-full overflow-x-clip" suppressHydrationWarning>
         <Script id="aurelia-session-intro" strategy="beforeInteractive">
           {INTRO_BOOT_SCRIPT}
         </Script>

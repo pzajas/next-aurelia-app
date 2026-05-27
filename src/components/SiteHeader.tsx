@@ -84,7 +84,7 @@ function NavLink({
       href={href}
       onClick={() => onNavigate?.(id)}
       className={cn(
-        "relative text-[9px] font-sans uppercase tracking-[0.38em]",
+        "relative text-[10px] font-sans uppercase tracking-[0.38em]",
         "transition-[opacity,letter-spacing,color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
         "after:pointer-events-none after:absolute after:-bottom-1 after:left-1/2 after:h-px after:w-0 after:-translate-x-1/2 after:scale-y-[0.35] after:bg-white/45 after:transition-[width,opacity] after:duration-500 after:ease-[cubic-bezier(0.22,1,0.36,1)]",
         "hover:after:w-full hover:after:opacity-100",
@@ -122,7 +122,7 @@ function RequestAppointmentCta({
         onClick={onClick}
         data-cursor-cta
         className={cn(
-          "group/cta relative inline-flex items-center gap-2.5 text-[9px] font-sans uppercase tracking-[0.36em] text-white/88",
+          "group/cta relative inline-flex items-center gap-2.5 text-[10px] font-sans uppercase tracking-[0.36em] text-white/88",
           "transition-[opacity,color,letter-spacing] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
           "hover:text-white hover:tracking-[0.4em]",
           "after:pointer-events-none after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-full after:origin-left after:scale-y-[0.35] after:bg-white/40 after:transition-transform after:duration-500 after:ease-[cubic-bezier(0.22,1,0.36,1)] after:content-['']",
@@ -148,7 +148,7 @@ function RequestAppointmentCta({
         className
       )}
     >
-      <span className="text-[9px] font-sans uppercase tracking-[0.38em] whitespace-nowrap">
+      <span className="text-[10px] font-sans uppercase tracking-[0.38em] whitespace-nowrap">
         {label}
       </span>
       <span className="mt-1.5 flex w-full justify-center" aria-hidden>
@@ -525,7 +525,7 @@ export default function SiteHeader() {
 
         <nav
           ref={navRef}
-          className="relative z-10 grid h-full min-w-0 grid-cols-[1fr_auto] items-center gap-4 px-6 md:flex md:px-8 lg:px-10"
+          className="relative z-10 grid h-full min-w-0 grid-cols-[1fr_auto] items-center gap-4 px-10 md:flex md:px-10 lg:px-10"
           aria-label="Main navigation"
         >
           <motion.div
@@ -539,7 +539,7 @@ export default function SiteHeader() {
               onClick={closeMenu}
               className={cn(
                 "text-[10px] uppercase transition-opacity duration-[650ms] hover:opacity-65",
-                "font-sans tracking-[0.52em]",
+                "font-sans text-[10px] tracking-[0.52em]",
                 "md:font-serif md:text-[11px] md:tracking-[0.22em] md:text-white/95"
               )}
               style={{

@@ -11,10 +11,10 @@ export default function Booking() {
   const headline = copy.booking.headline.map((line) => t(line));
 
   return (
-    <CinematicSurface intenseGrain className="py-28 md:py-36 px-8">
+    <CinematicSurface intenseGrain className="py-28 md:py-36">
       <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
         <div>
-          <div className="text-[8px] font-sans uppercase tracking-[0.5em] text-white/40 mb-8">
+          <div className="text-[12px] font-sans uppercase tracking-[0.5em] text-white/40 mb-8">
             {t(copy.booking.label)}
           </div>
 
@@ -33,7 +33,7 @@ export default function Booking() {
             ))}
           </div>
 
-          <div className="mt-8 text-[9px] font-sans uppercase text-white/40 tracking-[0.2em]">
+          <div className="mt-8 text-[12px] font-sans uppercase text-white/40 tracking-[0.2em]">
             {t(copy.booking.availability)}
           </div>
 
@@ -44,7 +44,7 @@ export default function Booking() {
               data-cursor-cta
               className="inline-flex flex-col gap-1 cursor-pointer group text-left"
             >
-              <span className="text-[10px] font-sans uppercase tracking-[0.35em] text-white">
+              <span className="text-[12px] font-sans uppercase tracking-[0.35em] text-white">
                 {t(copy.booking.cta)}
               </span>
               <div className="h-px bg-white/20 w-full mt-1 group-hover:bg-white/60 transition-colors duration-400" />

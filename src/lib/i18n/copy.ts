@@ -311,6 +311,12 @@ export const copy = {
     ],
   },
 
+  closingManifesto: {
+    label: b("MANIFESTO", "MANIFESTO"),
+    headline: b("Forma jest ciszą.", "Form is silence."),
+    pillars: b("RYTUAŁ · FORMA · CISZA", "RITUAL · FORM · SILENCE"),
+  },
+
   booking: {
     label: b(
       "ROZPOCZNIJ SWOJĄ TRANSFORMACJĘ",

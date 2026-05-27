@@ -164,7 +164,7 @@ export default function SessionIntro() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.8, ease: EASE }}
-          className="absolute left-6 top-6 font-sans text-[8px] uppercase tracking-[0.48em] text-white/28 md:left-10 md:top-10"
+          className="absolute left-6 top-6 font-sans text-[12px] uppercase tracking-[0.48em] text-white/28 md:left-10 md:top-10"
         >
           {t(copy.intro.sequence)}
         </motion.p>
@@ -173,7 +173,7 @@ export default function SessionIntro() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.35, duration: 0.8, ease: EASE }}
-          className="absolute right-6 top-6 font-sans text-[8px] tabular-nums tracking-[0.32em] text-white/32 md:right-10 md:top-10"
+          className="absolute right-6 top-6 font-sans text-[12px] tabular-nums tracking-[0.32em] text-white/32 md:right-10 md:top-10"
           aria-hidden
         >
           {String(progress).padStart(3, "0")}
@@ -194,7 +194,7 @@ export default function SessionIntro() {
               transition={{ delay: 0.35, duration: 1.1, ease: EASE }}
               style={{ transformOrigin: "right center" }}
             />
-            <span className="font-sans text-[7px] uppercase tracking-[0.55em] text-white/35">
+            <span className="font-sans text-[12px] uppercase tracking-[0.55em] text-white/35">
               {t(copy.hero.edition)}
             </span>
             <motion.span
@@ -253,7 +253,7 @@ export default function SessionIntro() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.35, duration: 0.9, ease: EASE }}
-            className="mt-3 font-sans text-[8px] uppercase tracking-[0.46em] text-white/38"
+            className="mt-3 font-sans text-[12px] uppercase tracking-[0.46em] text-white/38"
           >
             {t(copy.intro.atelier)}
           </motion.p>
@@ -280,7 +280,7 @@ export default function SessionIntro() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.5, duration: 0.8, ease: EASE }}
-          className="absolute bottom-6 font-sans text-[7px] uppercase tracking-[0.5em] text-white/22 md:bottom-8"
+          className="absolute bottom-6 font-sans text-[12px] uppercase tracking-[0.5em] text-white/22 md:bottom-8"
           aria-hidden
         >
           {t(copy.gallery.volume)}

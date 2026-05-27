@@ -96,12 +96,12 @@ export default function Testimonial() {
         aria-hidden
       />
 
-      <div className="relative px-8 pt-28 pb-36 md:pt-40 md:pb-48 lg:pt-48 lg:pb-56">
+      <div className="relative px-10 pt-28 pb-36 md:pt-40 md:pb-48 lg:pt-48 lg:pb-56">
         <motion.p
           variants={revealLabel}
           initial="hidden"
           animate={entered ? "visible" : "hidden"}
-          className="text-center text-[8px] font-sans uppercase tracking-[0.45em] text-editorial-micro mb-20 md:mb-28"
+          className="text-center text-[12px] font-sans uppercase tracking-[0.45em] text-editorial-micro mb-20 md:mb-28"
         >
           {t(copy.testimonials.label)}
         </motion.p>
@@ -164,7 +164,7 @@ export default function Testimonial() {
               </blockquote>
 
               {revealComplete ? (
-                <p className="mt-14 md:mt-16 text-[9px] font-sans uppercase tracking-[0.32em] text-editorial-micro">
+                <p className="mt-14 md:mt-16 text-[12px] font-sans uppercase tracking-[0.32em] text-editorial-micro">
                   {current.attribution}
                 </p>
               ) : (
@@ -176,7 +176,7 @@ export default function Testimonial() {
                     delay: 0.62,
                     ease: easeLuxury,
                   }}
-                  className="mt-14 md:mt-16 text-[9px] font-sans uppercase tracking-[0.32em] text-editorial-micro"
+                  className="mt-14 md:mt-16 text-[12px] font-sans uppercase tracking-[0.32em] text-editorial-micro"
                 >
                   {current.attribution}
                 </motion.p>
@@ -234,7 +234,7 @@ export default function Testimonial() {
                   }}
                   transition={hoverTransition}
                   style={{ transformOrigin: "center bottom" }}
-                  className="block max-w-[200px] text-center font-sans text-[8px] uppercase leading-relaxed tracking-[0.22em] text-editorial-body will-change-transform"
+                  className="block max-w-[200px] text-center font-sans text-[12px] uppercase leading-relaxed tracking-[0.22em] text-editorial-body will-change-transform"
                 >
                   {item.footnote}
                 </motion.span>

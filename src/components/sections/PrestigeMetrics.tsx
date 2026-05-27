@@ -106,7 +106,7 @@ export default function PrestigeMetrics() {
     <section ref={sectionRef} className="bg-background overflow-hidden">
       <motion.div
         style={{ y: parallaxY }}
-        className="max-w-5xl mx-auto px-8 py-20 border-b border-foreground/10"
+        className="max-w-5xl mx-auto px-10 py-20 border-b border-foreground/10"
       >
         <motion.p
           initial={{ opacity: 0, x: -14, letterSpacing: "0.28em" }}
@@ -116,7 +116,7 @@ export default function PrestigeMetrics() {
               : undefined
           }
           transition={{ duration: 1.1, ease: easeLuxury }}
-          className="text-[8px] font-sans uppercase text-foreground/40 mb-16"
+          className="text-[10px] font-sans uppercase text-foreground/40 mb-16"
         >
           {t(copy.prestige.label)}
         </motion.p>
@@ -188,7 +188,7 @@ export default function PrestigeMetrics() {
                     delay: labelDelay,
                     ease: easeLuxury,
                   }}
-                  className="text-[9px] font-sans uppercase tracking-[0.3em] text-foreground/60"
+                  className="text-[10px] font-sans uppercase tracking-[0.3em] text-foreground/60"
                 >
                   {label}
                 </motion.div>
