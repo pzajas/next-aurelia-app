@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import gallery2 from "@/assets/gallery-2.png";
+import CinematicSurface from "@/components/CinematicSurface";
+import { media } from "@/lib/media";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 
 export default function Booking() {
@@ -10,7 +11,7 @@ export default function Booking() {
   const headline = copy.booking.headline.map((line) => t(line));
 
   return (
-    <section className="bg-[#0C0B0A] py-28 md:py-36 px-8">
+    <CinematicSurface intenseGrain className="py-28 md:py-36 px-8">
       <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
         <div>
           <div className="text-[8px] font-sans uppercase tracking-[0.5em] text-white/40 mb-8">
@@ -40,6 +41,7 @@ export default function Booking() {
             <button
               type="button"
               data-testid="button-book-consultation"
+              data-cursor-cta
               className="inline-flex flex-col gap-1 cursor-pointer group text-left"
             >
               <span className="text-[10px] font-sans uppercase tracking-[0.35em] text-white">
@@ -52,14 +54,15 @@ export default function Booking() {
 
         <div className="hidden md:block relative w-full aspect-[3/4]">
           <Image
-            src={gallery2}
+            src={media.gallery[2].src}
             alt={t(copy.booking.cta)}
             fill
+            loading="lazy"
             className="object-cover grayscale opacity-60"
             sizes="50vw"
           />
         </div>
       </div>
-    </section>
+    </CinematicSurface>
   );
 }

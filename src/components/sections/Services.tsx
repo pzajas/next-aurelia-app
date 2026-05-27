@@ -37,10 +37,11 @@ export default function Services() {
   return (
     <section
       ref={sectionRef}
-      className="bg-background border-b border-foreground/10"
+      className="cinematic-section bg-layer-1 border-b border-editorial"
     >
+      <div className="cinematic-bloom" aria-hidden />
       <div className="relative mx-auto max-w-6xl px-8 py-24 md:py-32">
-        <header className="flex flex-col gap-6 pb-14 md:flex-row md:items-end md:justify-between md:pb-16">
+        <header className="flex flex-col gap-6 pb-14 md:flex-row md:items-end md:justify-between md:pb-16 editorial-offset-sm">
           <div>
             <motion.p
               initial={{ opacity: 0, x: -12, letterSpacing: "0.28em" }}

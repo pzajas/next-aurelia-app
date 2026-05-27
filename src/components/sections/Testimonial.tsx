@@ -84,13 +84,14 @@ export default function Testimonial() {
   return (
     <section
       ref={sectionRef}
-      className="relative bg-background text-foreground overflow-hidden border-b border-foreground/10"
+      className="cinematic-section relative bg-layer-0 text-editorial-body overflow-hidden border-b border-editorial"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocusCapture={() => setPaused(true)}
       onBlurCapture={() => setPaused(false)}
     >
-      <div
+      <motion.div className="cinematic-bloom" aria-hidden />
+      <motion.div
         className="testimonial-grain pointer-events-none absolute inset-0 opacity-[0.035]"
         aria-hidden
       />
@@ -100,7 +101,7 @@ export default function Testimonial() {
           variants={revealLabel}
           initial="hidden"
           animate={entered ? "visible" : "hidden"}
-          className="text-center text-[8px] font-sans uppercase tracking-[0.45em] text-foreground/40 mb-20 md:mb-28"
+          className="text-center text-[8px] font-sans uppercase tracking-[0.45em] text-editorial-micro mb-20 md:mb-28"
         >
           {t(copy.testimonials.label)}
         </motion.p>
@@ -134,7 +135,7 @@ export default function Testimonial() {
               transition={{ duration: 1.35, ease: easeLuxury }}
               className="flex flex-col items-center will-change-[opacity,transform]"
             >
-              <blockquote className="font-serif italic font-light text-[clamp(2rem,4.5vw,4rem)] leading-[1.35] tracking-[-0.01em] text-foreground">
+              <blockquote className="font-serif italic font-light text-[clamp(2rem,4.5vw,4rem)] leading-[1.35] tracking-[-0.01em] text-editorial-heading">
                 {current.lines.map((line, i) =>
                   revealComplete ? (
                     <span key={line} className="block">
@@ -163,7 +164,7 @@ export default function Testimonial() {
               </blockquote>
 
               {revealComplete ? (
-                <p className="mt-14 md:mt-16 text-[9px] font-sans uppercase tracking-[0.32em] text-foreground/50">
+                <p className="mt-14 md:mt-16 text-[9px] font-sans uppercase tracking-[0.32em] text-editorial-micro">
                   {current.attribution}
                 </p>
               ) : (
@@ -175,7 +176,7 @@ export default function Testimonial() {
                     delay: 0.62,
                     ease: easeLuxury,
                   }}
-                  className="mt-14 md:mt-16 text-[9px] font-sans uppercase tracking-[0.32em] text-foreground/50"
+                  className="mt-14 md:mt-16 text-[9px] font-sans uppercase tracking-[0.32em] text-editorial-micro"
                 >
                   {current.attribution}
                 </motion.p>
@@ -233,7 +234,7 @@ export default function Testimonial() {
                   }}
                   transition={hoverTransition}
                   style={{ transformOrigin: "center bottom" }}
-                  className="block max-w-[200px] text-center font-sans text-[8px] uppercase leading-relaxed tracking-[0.22em] text-foreground will-change-transform"
+                  className="block max-w-[200px] text-center font-sans text-[8px] uppercase leading-relaxed tracking-[0.22em] text-editorial-body will-change-transform"
                 >
                   {item.footnote}
                 </motion.span>

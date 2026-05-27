@@ -1,24 +1,23 @@
 "use client";
 
-import Image, { type StaticImageData } from "next/image";
+import Image from "next/image";
 import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import gallery1 from "@/assets/gallery-1.png";
-import gallery2 from "@/assets/gallery-2.png";
-import gallery3 from "@/assets/gallery-3.png";
-import gallery4 from "@/assets/gallery-4.png";
-import gallery5 from "@/assets/gallery-5.png";
+import CinematicSurface from "@/components/CinematicSurface";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
+import { media, lookupMedia } from "@/lib/media";
 
-const PERSON_HERO = "/images/person.png";
+const GALLERY_HERO = media.galleryHero.src;
 
 const EASE = [0.19, 1, 0.22, 1] as const;
 const HOVER_EASE = [0.22, 1, 0.36, 1] as const;
 const HOVER_MOTION = { duration: 0.82, ease: HOVER_EASE };
 
 type LightboxItem = {
-  src: StaticImageData | string;
+  src: string;
+  width: number;
+  height: number;
   alt: string;
   objectPosition: string;
 };
@@ -47,7 +46,7 @@ type Span = { col: string; row: string };
 type Tile = {
   id: string;
   span: Span;
-  src: StaticImageData | string;
+  src: string;
   altIndex: number;
   objectPosition: string;
   priority?: boolean;
@@ -60,80 +59,100 @@ type Tile = {
  * Klucz: span 2+ rzędów = portrety pionowe; hero 7 rzędów; makro 4 rzędy; dół 2 rzędy.
  */
 const TILES: Tile[] = [
-  // Rząd 1 — trzy pionowe (2 rzędy wysokości każdy)
-  { id: "r1-chair", span: { col: "1 / 2", row: "1 / 3" }, src: gallery1, altIndex: 0, objectPosition: "52% 28%" },
-  { id: "r1-nape", span: { col: "2 / 3", row: "1 / 3" }, src: gallery2, altIndex: 1, objectPosition: "50% 38%" },
+  // Rząd 1 — scalony lewy (row1+row2) + nape + arch
+  {
+    id: "r1r2-merged",
+    span: { col: "1 / 2", row: "1 / 5" },
+    src: media.galleryMergedR1R2.src,
+    altIndex: 8,
+    objectPosition: "50% 38%",
+    labelIndex: 4,
+  },
+  { id: "r1-nape", span: { col: "2 / 3", row: "1 / 3" }, src: media.gallery[2].src, altIndex: 4, objectPosition: "50% 48%" },
   {
     id: "r1-arch",
     span: { col: "3 / 5", row: "1 / 3" },
-    src: gallery4,
+    src: media.gallery[8].src,
     altIndex: 3,
-    objectPosition: "42% 52%",
+    objectPosition: "50% 38%",
     labelIndex: 1,
   },
 
-  // Rząd 2 — cytat (kwadrat) + trzy pionowe
-  { id: "r2-motion", span: { col: "2 / 3", row: "3 / 5" }, src: gallery3, altIndex: 2, objectPosition: "44% 36%" },
-  { id: "r2-tools", span: { col: "3 / 4", row: "3 / 5" }, src: gallery5, altIndex: 4, objectPosition: "54% 50%" },
-  { id: "r2-bob", span: { col: "4 / 5", row: "3 / 5" }, src: gallery2, altIndex: 1, objectPosition: "68% 35%" },
+  // Rząd 2 — jedno szerokie zdjęcie
+  {
+    id: "r2-wide",
+    span: { col: "2 / 5", row: "3 / 5" },
+    src: media.gallery[6].src,
+    altIndex: 2,
+    objectPosition: "50% 48%",
+  },
 
   // Klaster lewy + hero prawy
-  { id: "r3-wave", span: { col: "1 / 2", row: "5 / 7" }, src: gallery3, altIndex: 2, objectPosition: "50% 58%" },
-  {
-    id: "r3-hall",
-    span: { col: "2 / 3", row: "5 / 9" },
-    src: gallery4,
-    altIndex: 3,
-    objectPosition: "55% 48%",
-    labelIndex: 4,
-  },
   {
     id: "r4-macro",
     span: { col: "1 / 3", row: "7 / 11" },
-    src: gallery1,
+    src: media.gallery[9].src,
     altIndex: 0,
-    objectPosition: "48% 68%",
+    objectPosition: "50% 52%",
     labelIndex: 2,
   },
   {
     id: "hero",
     span: { col: "3 / 5", row: "5 / 11" },
-    src: PERSON_HERO,
+    src: GALLERY_HERO,
     altIndex: 8,
-    objectPosition: "38% 22%",
+    objectPosition: "50% 38%",
     priority: true,
     labelIndex: 0,
   },
 
-  // Dół — cztery pionowe (2 rzędy), bez nakładania na makro
-  { id: "r6-a", span: { col: "1 / 2", row: "11 / 13" }, src: gallery3, altIndex: 2, objectPosition: "46% 40%" },
-  { id: "r6-b", span: { col: "2 / 3", row: "11 / 13" }, src: gallery5, altIndex: 4, objectPosition: "50% 46%" },
-  { id: "r6-c", span: { col: "3 / 4", row: "11 / 13" }, src: gallery4, altIndex: 3, objectPosition: "50% 42%" },
-  { id: "r6-d", span: { col: "4 / 5", row: "11 / 13" }, src: gallery1, altIndex: 0, objectPosition: "58% 32%" },
+  // Dół — jedno szerokie + czwarte
+  {
+    id: "r6-wide",
+    span: { col: "1 / 4", row: "11 / 13" },
+    src: media.gallery[7].src,
+    altIndex: 2,
+    objectPosition: "50% 52%",
+  },
+  { id: "r6-d", span: { col: "4 / 5", row: "11 / 13" }, src: media.gallery[10].src, altIndex: 4, objectPosition: "50% 42%" },
 ];
 
-const QUOTE_SPAN: Span = { col: "1 / 2", row: "3 / 5" };
+/** Cytat pod dawnymi dwoma portretami (kolumny 1–2, rzędy 5–7). */
+const QUOTE_SPAN: Span = { col: "1 / 3", row: "5 / 7" };
 
 const MOBILE_TILES: Tile[] = [
   {
     id: "m-hero",
     span: { col: "1 / 3", row: "1 / 4" },
-    src: PERSON_HERO,
+    src: GALLERY_HERO,
     altIndex: 8,
     priority: true,
-    objectPosition: "42% 18%",
+    objectPosition: "50% 36%",
     labelIndex: 0,
   },
-  { id: "m-1", span: { col: "1 / 2", row: "4 / 6" }, src: gallery1, altIndex: 0, objectPosition: "50% 30%" },
-  { id: "m-2", span: { col: "2 / 3", row: "4 / 6" }, src: gallery2, altIndex: 1, objectPosition: "50% 38%" },
-  { id: "m-3", span: { col: "1 / 2", row: "6 / 9" }, src: gallery3, altIndex: 2, objectPosition: "45% 55%" },
-  { id: "m-4", span: { col: "2 / 3", row: "6 / 8" }, src: gallery5, altIndex: 4, objectPosition: "52% 48%" },
-  { id: "m-5", span: { col: "2 / 3", row: "8 / 9" }, src: gallery4, altIndex: 3, objectPosition: "48% 52%" },
-  { id: "m-6a", span: { col: "1 / 2", row: "9 / 11" }, src: gallery4, altIndex: 3, objectPosition: "50% 50%" },
-  { id: "m-6b", span: { col: "2 / 3", row: "9 / 11" }, src: gallery2, altIndex: 1, objectPosition: "50% 40%" },
+  {
+    id: "m-r1r2",
+    span: { col: "1 / 2", row: "3 / 7" },
+    src: media.galleryMergedR1R2.src,
+    altIndex: 8,
+    objectPosition: "50% 38%",
+  },
+  { id: "m-2", span: { col: "2 / 3", row: "4 / 6" }, src: media.gallery[2].src, altIndex: 4, objectPosition: "50% 45%" },
+  { id: "m-6a", span: { col: "1 / 2", row: "9 / 11" }, src: media.gallery[9].src, altIndex: 0, objectPosition: "50% 50%" },
+  { id: "m-6b", span: { col: "2 / 3", row: "9 / 11" }, src: media.gallery[10].src, altIndex: 4, objectPosition: "50% 40%" },
 ];
 
-const MOBILE_QUOTE: Span = { col: "1 / 3", row: "3 / 4" };
+const MOBILE_QUOTE: Span = { col: "1 / 3", row: "6 / 8" };
+
+/** Match Next.js `sizes` to actual grid column span — avoids upscaling tiny assets. */
+function tileSizes(span: Span): string {
+  const match = span.col.match(/^(\d+)\s*\/\s*(\d+)$/);
+  if (!match) return "(max-width: 1280px) 25vw, 320px";
+  const cols = Number(match[2]) - Number(match[1]);
+  const vw = (cols / 4) * 100;
+  const maxPx = Math.round((CONTAINER_MAX / 4) * cols);
+  return `(max-width: 1280px) ${vw}vw, ${maxPx}px`;
+}
 
 const cornerVariants = {
   idle: { opacity: 0, scale: 0.6 },
@@ -190,10 +209,7 @@ function GalleryLightbox({
   closeLabel: string;
   onClose: () => void;
 }) {
-  const intrinsic =
-    typeof item.src === "string"
-      ? null
-      : { width: item.src.width, height: item.src.height };
+  const intrinsic = { width: item.width, height: item.height };
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -216,7 +232,7 @@ function GalleryLightbox({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.45, ease: HOVER_EASE }}
-      className="fixed inset-0 z-[100] flex cursor-zoom-out items-center justify-center bg-[#050505]/96 p-6 md:p-10"
+      className="fixed inset-0 z-[100] flex cursor-zoom-out items-center justify-center bg-[#0a0a0a]/96 p-6 md:p-10"
       onClick={onClose}
     >
       <motion.figure
@@ -233,21 +249,12 @@ function GalleryLightbox({
             alt={item.alt}
             width={intrinsic.width}
             height={intrinsic.height}
+            unoptimized
+            quality={95}
             className="h-auto max-h-[min(88vh,920px)] w-auto max-w-[min(92vw,760px)] object-contain grayscale contrast-[1.08] brightness-[0.96]"
             style={{ objectPosition: item.objectPosition }}
           />
-        ) : (
-          <div className="relative h-[min(88vh,920px)] w-[min(92vw,560px)]">
-            <Image
-              src={item.src}
-              alt={item.alt}
-              fill
-              sizes="92vw"
-              className="object-contain grayscale contrast-[1.08] brightness-[0.96]"
-              style={{ objectPosition: item.objectPosition }}
-            />
-          </div>
-        )}
+        ) : null}
       </motion.figure>
       <button
         type="button"
@@ -264,11 +271,11 @@ function GalleryLightbox({
 const imageVariants = {
   idle: {
     scale: 1,
-    filter: "grayscale(1) brightness(0.92) contrast(1.1)",
+    filter: "grayscale(1) brightness(0.94) contrast(1.06)",
   },
   hover: {
-    scale: 1.05,
-    filter: "grayscale(1) brightness(1) contrast(1.14)",
+    scale: 1.06,
+    filter: "grayscale(1) brightness(0.98) contrast(1.1)",
   },
 };
 
@@ -303,12 +310,16 @@ function PhotoTile({
     ? { idle: { scale: 1 }, hover: { scale: 1 } }
     : imageVariants;
 
-  const open = () =>
+  const open = () => {
+    const asset = lookupMedia(tile.src);
     onOpen({
-      src: tile.src,
+      src: asset.src,
+      width: asset.width,
+      height: asset.height,
       alt,
       objectPosition: tile.objectPosition,
     });
+  };
 
   return (
     <motion.button
@@ -327,7 +338,9 @@ function PhotoTile({
         }
       }}
       aria-label={alt}
-      className="gallery-tile relative min-h-0 cursor-pointer overflow-hidden bg-[#050505] p-0 text-left outline-none focus-visible:ring-1 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-[#050505]"
+      data-cursor-gallery
+      data-cursor-label={label || "VIEW"}
+      className="gallery-tile relative min-h-0 cursor-pointer overflow-hidden bg-[#0a0a0a] p-0 text-left outline-none focus-visible:ring-1 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0a]"
       style={{ gridColumn: tile.span.col, gridRow: tile.span.row }}
     >
       <motion.div
@@ -340,7 +353,9 @@ function PhotoTile({
           alt={alt}
           fill
           sizes={sizes}
+          unoptimized
           priority={tile.priority}
+          loading={tile.priority ? "eager" : "lazy"}
           className="object-cover"
           style={{ objectPosition: tile.objectPosition }}
         />
@@ -350,7 +365,7 @@ function PhotoTile({
         aria-hidden
         variants={grainVariants}
         transition={hoverTransition}
-        className="testimonial-grain pointer-events-none absolute inset-0 z-[1] mix-blend-overlay"
+        className="cinematic-grain cinematic-grain--tile pointer-events-none absolute inset-0 z-[1]"
       />
 
       <EditorialCorners />
@@ -371,10 +386,10 @@ function PhotoTile({
 function QuoteTile({ line1, line2, span }: { line1: string; line2: string; span: Span }) {
   return (
     <div
-      className="flex min-h-0 flex-col items-center justify-center bg-[#050505] px-4 py-6 text-center"
+      className="flex min-h-0 flex-col items-center justify-center bg-[#0a0a0a] px-4 py-6 text-center"
       style={{ gridColumn: span.col, gridRow: span.row }}
     >
-      <p className="max-w-[10.5rem] font-serif text-[clamp(0.82rem, 1.3vw, 1.08rem)] font-light italic leading-[1.52] text-white/[0.88]">
+      <p className="max-w-[min(18rem,90%)] font-serif text-[clamp(0.82rem, 1.3vw, 1.08rem)] font-light italic leading-[1.52] text-white/[0.88]">
         {line1}
         <br />
         {line2}
@@ -392,17 +407,22 @@ export default function Gallery() {
   const closeLightbox = useCallback(() => setLightbox(null), []);
 
   return (
-    <section ref={sectionRef} id="works" className="relative bg-[#050505] py-16 md:py-20">
+    <CinematicSurface
+      ref={sectionRef}
+      id="works"
+      intenseGrain
+      className="py-16 md:py-20"
+      contentClassName="mx-auto w-full max-w-[1280px] px-5 md:px-8"
+    >
       <motion.div
         initial={{ opacity: 0 }}
         animate={inView ? { opacity: 1 } : undefined}
         transition={{ duration: 1.1, ease: EASE }}
-        className="mx-auto w-full px-5 md:px-8"
-        style={{ maxWidth: CONTAINER_MAX }}
+        className="w-full"
       >
         <header className="mb-10 flex items-start justify-between md:mb-12">
           <div className="space-y-1">
-            <p className="font-sans text-[9px] uppercase tracking-[0.42em] text-white/50">
+            <p className="font-sans text-[9px] uppercase tracking-[0.42em] text-white/36">
               {t(copy.gallery.brand)}
             </p>
             <p className="font-sans text-[8px] uppercase tracking-[0.36em] text-white/26">
@@ -410,7 +430,7 @@ export default function Gallery() {
             </p>
           </div>
           <div className="space-y-1 text-right">
-            <p className="font-sans text-[9px] uppercase tracking-[0.42em] text-white/50">
+            <p className="font-sans text-[9px] uppercase tracking-[0.42em] text-white/36">
               {t(copy.gallery.selectedWorks)}
             </p>
             <p className="font-sans text-[8px] uppercase tracking-[0.36em] text-white/26">
@@ -434,7 +454,7 @@ export default function Gallery() {
                 key={tile.id}
                 tile={tile}
                 alt={t(copy.gallery.alts[tile.altIndex])}
-                sizes="(max-width: 1280px) 25vw, 300px"
+                sizes={tileSizes(tile.span)}
                 onOpen={setLightbox}
                 label={
                   tile.labelIndex !== undefined
@@ -493,15 +513,13 @@ export default function Gallery() {
       <AnimatePresence>
         {lightbox ? (
           <GalleryLightbox
-            key={
-              typeof lightbox.src === "string" ? lightbox.src : lightbox.src.src
-            }
+            key={lightbox.src}
             item={lightbox}
             closeLabel={t(copy.nav.close)}
             onClose={closeLightbox}
           />
         ) : null}
       </AnimatePresence>
-    </section>
+    </CinematicSurface>
   );
 }

@@ -1,9 +1,17 @@
 "use client";
 
-import Image from "next/image";
-import { AnimatePresence, motion, useInView, useScroll, useTransform } from "framer-motion";
-import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
+import { media } from "@/lib/media";
+import { cn } from "@/lib/utils";
+import {
+    AnimatePresence,
+    motion,
+    useInView,
+    useScroll,
+    useTransform,
+} from "framer-motion";
+import Image from "next/image";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const easeLuxury = [0.22, 1, 0.36, 1] as const;
 const easeEditorial = [0.19, 1, 0.22, 1] as const;
@@ -17,25 +25,25 @@ const teamNames = [
     id: "01",
     name: "Sofia Renault",
     signature: "Sofia Renault",
-    image: "/images/founder.png",
+    image: media.people.founder.src,
   },
   {
     id: "02",
     name: "Margaux Chen",
     signature: "Margaux Chen",
-    image: "/images/employee1.png",
+    image: media.people.employee1.src,
   },
   {
     id: "03",
     name: "Elias Moreau",
     signature: "Elias Moreau",
-    image: "/images/employee2.png",
+    image: media.people.employee2.src,
   },
   {
     id: "04",
     name: "Amélie Dubois",
     signature: "Amélie Dubois",
-    image: "/images/employee3.png",
+    image: media.people.employee3.src,
   },
 ] as const;
 
@@ -108,7 +116,9 @@ function TeamMemberContent({
   member: TeamMember;
   isReveal: boolean;
 }) {
-  const motionConfig = isReveal ? buildRevealMotionConfig() : switchMotionConfig;
+  const motionConfig = isReveal
+    ? buildRevealMotionConfig()
+    : switchMotionConfig;
 
   return (
     <motion.div
@@ -134,21 +144,21 @@ function TeamMemberContent({
               }
             : motionConfig.item
         }
-        className="text-[8px] font-sans uppercase tracking-[0.4em] text-foreground/40 mb-10"
+        className="text-[8px] font-sans uppercase tracking-[0.55em] text-foreground/38 mb-10"
       >
         {member.label}
       </motion.p>
 
       <motion.h2
         variants={motionConfig.item}
-        className="font-serif text-[clamp(2.5rem,5vw,4.5rem)] font-light leading-[1.05] text-foreground"
+        className="font-serif text-[clamp(3rem,6vw,5.5rem)] font-light leading-[0.95] tracking-[-0.01em] text-foreground"
       >
         {member.name}
       </motion.h2>
 
       <motion.p
         variants={motionConfig.item}
-        className="font-serif text-[clamp(1.1rem,2vw,1.5rem)] font-light text-foreground/80 mt-2"
+        className="font-serif text-[clamp(1rem,1.6vw,1.3rem)] font-light text-foreground/55 mt-4 tracking-[0.01em]"
       >
         {member.role}
       </motion.p>
@@ -156,31 +166,31 @@ function TeamMemberContent({
       {isReveal ? (
         <motion.div
           initial={{ width: 0, opacity: 0 }}
-          animate={{ width: 64, opacity: 1 }}
+          animate={{ width: 48, opacity: 1 }}
           transition={{
-            duration: 1.1,
-            delay: 0.55,
+            duration: 1.4,
+            delay: 0.6,
             ease: easeLuxury,
           }}
-          className="h-px bg-foreground/20 my-8"
+          className="h-px bg-foreground/15 my-10"
         />
       ) : (
         <motion.div
           variants={motionConfig.item}
-          className="w-16 border-t border-foreground/20 my-8"
+          className="w-12 border-t border-foreground/12 my-10"
         />
       )}
 
       <motion.p
         variants={motionConfig.item}
-        className="font-serif text-[clamp(1rem,1.6vw,1.25rem)] leading-relaxed text-foreground/90 max-w-md"
+        className="font-serif italic text-[clamp(1.15rem,1.8vw,1.45rem)] leading-[1.65] text-foreground/70 max-w-sm"
       >
         {member.quote}
       </motion.p>
 
       <motion.p
         variants={motionConfig.item}
-        className="font-serif italic text-[clamp(0.95rem,1.4vw,1.1rem)] text-foreground/70 mt-8"
+        className="font-sans text-[10px] uppercase tracking-[0.3em] text-foreground/40 mt-8"
       >
         — {member.signature}
       </motion.p>
@@ -195,7 +205,6 @@ export default function Founder() {
   const [sectionEntered, setSectionEntered] = useState(false);
   const [playedSectionReveal, setPlayedSectionReveal] = useState(false);
   const [active, setActive] = useState(0);
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [paused, setPaused] = useState(false);
 
   const team: TeamMember[] = teamNames.map((person, index) => {
@@ -253,158 +262,101 @@ export default function Founder() {
   return (
     <section
       ref={sectionRef}
-      className="bg-background border-b border-foreground/10 overflow-hidden"
+      className="relative overflow-hidden mt-8 md:mt-12 lg:mt-16"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onFocusCapture={() => setPaused(true)}
+      onBlurCapture={() => setPaused(false)}
     >
+      {/* Full-width background image */}
+      <div className="absolute inset-0">
+        {teamNames.map((person, index) => (
+          <motion.div
+            key={person.image + index}
+            animate={{
+              opacity: index === active ? 1 : 0,
+              scale: index === active ? 1 : 1.02,
+            }}
+            transition={switchTransition}
+            className="absolute inset-0"
+            aria-hidden={index !== active}
+          >
+            <Image
+              src={person.image}
+              alt={index === active ? member.name : ""}
+              fill
+              priority={index === 0}
+              className="object-cover object-[65%_35%] grayscale"
+              sizes="100vw"
+            />
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Text overlay on the left */}
       <motion.div
         style={{ y: parallaxY }}
-        className="max-w-6xl mx-auto px-8 py-20 md:py-28"
+        className="relative z-10 max-w-7xl mx-auto px-10 md:px-16 lg:px-20 py-28 md:py-36 lg:py-44"
       >
-        <div
-          className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(280px,420px)_auto] gap-12 lg:gap-16 items-start lg:items-center"
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => setPaused(false)}
-          onFocusCapture={() => setPaused(true)}
-          onBlurCapture={() => setPaused(false)}
+        <motion.div
+          initial={{ opacity: 0, x: -12 }}
+          animate={sectionEntered ? { opacity: 1, x: 0 } : undefined}
+          transition={{ duration: 1.6, ease: easeLuxury }}
+          className="max-w-lg"
         >
+          <div className="relative h-[400px] sm:h-[440px] md:h-[480px] w-full shrink-0 overflow-hidden">
+            <AnimatePresence initial={false}>
+              <TeamMemberContent
+                key={member.id}
+                member={member}
+                isReveal={isSectionReveal}
+              />
+            </AnimatePresence>
+          </div>
+
+          {/* Progress indicators */}
           <motion.div
-            initial={{ opacity: 0, x: -16 }}
-            animate={
-              sectionEntered ? { opacity: 1, x: 0 } : undefined
-            }
-            transition={{ duration: 1.4, ease: easeLuxury }}
-            className="order-2 lg:order-1 flex flex-col"
+            initial={{ opacity: 0 }}
+            animate={sectionEntered ? { opacity: 1 } : undefined}
+            transition={{ duration: 1.2, delay: 1, ease: easeLuxury }}
+            className="mt-16 flex items-center gap-3"
           >
-            <div className="relative h-[380px] sm:h-[400px] md:h-[420px] w-full shrink-0 overflow-hidden">
-              <AnimatePresence initial={false}>
-                <TeamMemberContent
-                  key={member.id}
-                  member={member}
-                  isReveal={isSectionReveal}
-                />
-              </AnimatePresence>
-            </div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={sectionEntered ? { opacity: 1, y: 0 } : undefined}
-              transition={{ duration: 1, delay: 0.85, ease: easeLuxury }}
-              className="mt-12 flex shrink-0 items-center gap-8 md:gap-10"
-              onMouseLeave={() => setHoveredIndex(null)}
-            >
-              {teamNames.map((person, index) => {
-                const isActive = index === active;
-                const isHovered = hoveredIndex === index;
-                const dimSibling =
-                  hoveredIndex !== null && !isActive && !isHovered;
-
-                return (
-                  <motion.button
-                    key={person.id}
-                    type="button"
-                    onClick={() => goTo(index)}
-                    onMouseEnter={() => setHoveredIndex(index)}
-                    aria-label={`${t(copy.founder.viewMember)} ${person.name}`}
-                    aria-current={isActive ? "true" : undefined}
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{
-                      opacity: sectionEntered ? (dimSibling ? 0.38 : 1) : 0,
-                      y: sectionEntered ? 0 : 8,
-                    }}
-                    transition={{
-                      opacity: { ...hoverTransition, duration: 1.2 },
-                      y: {
-                        duration: 0.9,
-                        delay: 0.95 + index * 0.08,
-                        ease: easeLuxury,
-                      },
-                    }}
-                    className="group flex h-10 w-10 cursor-pointer flex-col items-center justify-end gap-2"
-                  >
-                    <motion.span
-                      animate={{
-                        opacity: isActive ? 1 : isHovered ? 0.78 : 0.48,
-                        scale: isActive ? 1.14 : isHovered ? 1.28 : 1,
-                      }}
-                      transition={hoverTransition}
-                      style={{ transformOrigin: "center bottom" }}
-                      className="w-full text-center font-sans text-[9px] font-normal tabular-nums uppercase tracking-[0.35em] text-foreground will-change-transform"
-                    >
-                      {person.id}
-                    </motion.span>
-                    <motion.span
-                      className="block h-px w-6 max-w-full origin-left bg-foreground/65 scale-y-[0.35] will-change-transform"
-                      initial={false}
-                      animate={{
-                        scaleX: isActive ? 1 : isHovered ? 0.55 : 0,
-                      }}
-                      transition={{ duration: 1.4, ease: easeEditorial }}
-                      aria-hidden
-                    />
-                  </motion.button>
-                );
-              })}
-            </motion.div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.99 }}
-            animate={
-              sectionEntered ? { opacity: 1, scale: 1 } : undefined
-            }
-            transition={{ duration: 1.5, delay: 0.28, ease: easeLuxury }}
-            className="order-1 lg:order-2 flex justify-center lg:justify-end"
-          >
-            <div className="relative w-full max-w-[420px] aspect-[3/4] overflow-hidden bg-foreground/5">
-              {teamNames.map((person, index) => (
-                <motion.div
-                  key={person.image}
-                  animate={{
-                    opacity: index === active ? 1 : 0,
-                    scale: index === active ? 1 : 1.02,
-                  }}
-                  transition={switchTransition}
-                  className="absolute inset-0"
-                  aria-hidden={index !== active}
+            {teamNames.map((person, index) => {
+              const isActive = index === active;
+              return (
+                <button
+                  key={person.id}
+                  type="button"
+                  onClick={() => goTo(index)}
+                  aria-label={`${t(copy.founder.viewMember)} ${person.name}`}
+                  aria-current={isActive ? "true" : undefined}
+                  className="relative h-6 cursor-pointer flex items-center"
+                  style={{ width: isActive ? 48 : 16 }}
                 >
-                  <Image
-                    src={person.image}
-                    alt={index === active ? member.name : ""}
-                    fill
-                    priority={index === 0}
-                    className="object-cover grayscale"
-                    sizes="(max-width: 1024px) 90vw, 420px"
-                  />
-                </motion.div>
-              ))}
-            </div>
+                  <span
+                    className={cn(
+                      "block h-[1px] w-full overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                      isActive ? "bg-foreground/20" : "bg-foreground/12"
+                    )}
+                  >
+                    {isActive && (
+                      <motion.span
+                        className="block h-full bg-foreground/80"
+                        initial={{ width: "0%" }}
+                        animate={{ width: "100%" }}
+                        transition={{
+                          duration: ROTATE_MS / 1000,
+                          ease: "linear",
+                        }}
+                        key={active}
+                      />
+                    )}
+                  </span>
+                </button>
+              );
+            })}
           </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: 12 }}
-            animate={sectionEntered ? { opacity: 1, x: 0 } : undefined}
-            transition={{ duration: 1.2, delay: 0.45, ease: easeLuxury }}
-            className="hidden lg:flex order-3 items-center justify-end self-stretch py-4"
-          >
-            <motion.p
-              initial={{ letterSpacing: "0.28em" }}
-              animate={sectionEntered ? { letterSpacing: "0.35em" } : undefined}
-              transition={{ duration: 1.2, delay: 0.5, ease: easeLuxury }}
-              className="text-[9px] font-sans uppercase text-foreground/40 whitespace-nowrap"
-              style={{ writingMode: "vertical-rl" }}
-            >
-              {t(copy.founder.locations)}
-            </motion.p>
-          </motion.div>
-        </div>
-
-        <motion.p
-          initial={{ opacity: 0, y: 8 }}
-          animate={sectionEntered ? { opacity: 1, y: 0 } : undefined}
-          transition={{ duration: 1, delay: 0.55, ease: easeLuxury }}
-          className="lg:hidden mt-10 text-center text-[9px] font-sans uppercase tracking-[0.35em] text-foreground/40"
-        >
-          {t(copy.founder.locations)}
-        </motion.p>
+        </motion.div>
       </motion.div>
     </section>
   );

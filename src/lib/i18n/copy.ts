@@ -30,6 +30,11 @@ export const copy = {
     requestAppointment: b("Umów Konsultację", "Request Appointment"),
     menu: b("Menu", "Menu"),
     close: b("Zamknij", "Close"),
+    ctaSubline: b(
+      "Prywatna konsultacja atelier",
+      "Private atelier consultation"
+    ),
+    editionMark: b("ÉDITION MMXXVI", "ÉDITION MMXXVI"),
   },
 
   hero: {
@@ -68,8 +73,8 @@ export const copy = {
         label: b("ATELIER / ZAŁOŻYCIELKA", "ATELIER / FOUNDER"),
         role: b("Założycielka Aurelia Paris", "Founder of Aurelia Paris"),
         quote: b(
-          "Forma, która porusza się razem z Tobą.",
-          "Hair is architecture in motion. Every silhouette is designed to reveal identity, not conceal it."
+          "Włosy to architektura w ruchu. Każda sylwetka, którą tworzę, ma odsłaniać tożsamość — nie ukrywać jej. Forma porusza się razem z Tobą.",
+          "Hair is architecture in motion. Every silhouette I create is designed to reveal identity, not conceal it. Form moves with you."
         ),
       },
       {
@@ -79,16 +84,16 @@ export const copy = {
           "Directrice of Colour Architecture"
         ),
         quote: b(
-          "Kolor buduje głębię, światło i charakter formy.",
-          "Colour is light made legible. We sculpt tone the way an atelier sculpts form — with restraint, intention, and silence."
+          "Kolor to światło uczynione widzialnym. Rzeźbimy ton tak, jak atelier rzeźbi formę — z powściągliwością, intencją i ciszą między odcieniami.",
+          "Colour is light made legible. We sculpt tone the way an atelier sculpts form — with restraint, intention, and silence between the shades."
         ),
       },
       {
         label: b("ATELIER / CIĘCIE", "ATELIER / CUT"),
         role: b("Dyrektor Artystycznych Cięć", "Master of Editorial Cut"),
         quote: b(
-          "Najlepsze cięcie nie dominuje — pozostawia po sobie wyłącznie formę.",
-          "A line should feel inevitable. The best cut disappears — only the silhouette remains, speaking on its own."
+          "Linia powinna wydawać się nieunikniona. Najlepsze cięcie znika — pozostaje jedynie sylwetka, która mówi sama za siebie, bez zbędnych słów.",
+          "A line should feel inevitable. The best cut disappears — only the silhouette remains, speaking on its own without unnecessary words."
         ),
       },
       {
@@ -98,8 +103,8 @@ export const copy = {
           "Director of Ritual & Restoration"
         ),
         quote: b(
-          "Każdy rytuał odbudowy wymaga czasu, precyzji i uważności.",
-          "Restoration is ceremony. Every session is a quiet negotiation between memory, texture, and what the hair is ready to become."
+          "Odbudowa to ceremonia. Każda sesja jest cichą negocjacją między pamięcią, teksturą i tym, czym włosy są gotowe się stać. Czas jest naszym narzędziem.",
+          "Restoration is ceremony. Every session is a quiet negotiation between memory, texture, and what the hair is ready to become. Time is our instrument."
         ),
       },
     ],
@@ -341,5 +346,11 @@ export const copy = {
       "Created by Aurelia Studio",
       "Made by AURELIA Studio"
     ),
+    privacyPolicy: b("Polityka Prywatności", "Privacy Policy"),
+    terms: b("Regulamin", "Terms"),
+    backToTop: b("Wróć do góry", "Back to top"),
+    cityParis: b("Paryż", "Paris"),
+    cityMayfair: b("Mayfair", "Mayfair"),
+    cityNewYork: b("Nowy Jork", "New York"),
   },
 } as const;

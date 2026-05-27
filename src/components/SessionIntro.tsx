@@ -59,7 +59,8 @@ export default function SessionIntro() {
     } catch {
       /* private mode */
     }
-    document.body.style.overflow = "";
+    document.documentElement.style.overflow = "";
+    document.documentElement.style.scrollbarGutter = "";
     setActive(false);
     setExiting(false);
     exitingRef.current = false;
@@ -100,7 +101,8 @@ export default function SessionIntro() {
     if (!active) return;
 
     finishRef.current = finishIntro;
-    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+    document.documentElement.style.scrollbarGutter = "stable";
 
     const beginExit = () => {
       document.documentElement.removeAttribute("data-intro");
@@ -129,7 +131,8 @@ export default function SessionIntro() {
       window.clearTimeout(exitTimer);
       window.clearTimeout(fallbackTimer);
       cancelAnimationFrame(frame);
-      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+      document.documentElement.style.scrollbarGutter = "";
     };
   }, [active, finishIntro, revealHero]);
 

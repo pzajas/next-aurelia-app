@@ -1,134 +1,124 @@
 "use client";
 
 import Image from "next/image";
-import { motion } from "framer-motion";
-import { useState } from "react";
-import heroImg from "@/assets/hero.png";
-import { useIntroReveal } from "@/lib/intro/IntroRevealContext";
+import { useEffect, useState } from "react";
+import { media } from "@/lib/media";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
-import { cn } from "@/lib/utils";
+import { useIntroReveal } from "@/lib/intro/IntroRevealContext";
 
 const HERO_EASE = [0.22, 1, 0.36, 1] as const;
-const HERO_EASE_CSS = "cubic-bezier(0.22, 1, 0.36, 1)";
 
-/** Jedna ścieżka animacji — po intro i przy zwykłym wejściu */
 const HERO_ENTRANCE = {
-  image: { duration: 2.8, fromScale: 1.06 },
-  edition: { delay: 0, duration: 0.5 },
-  title: { delay: 0.5, duration: 1.2 },
-  tagline: { delay: 0.8, duration: 1.2 },
-  subtitle: { delay: 1, duration: 1.1 },
-  appointment: { delay: 1.2, duration: 0.8 },
+  edition: { delay: 1.8, duration: 0.8 },
+  title: { delay: 2.0, duration: 1.0 },
+  tagline: { delay: 2.2, duration: 1.0 },
+  subtitle: { delay: 2.4, duration: 0.9 },
+  appointment: { delay: 2.5, duration: 0.7 },
 } as const;
 
 export default function Hero() {
   const { t, copy } = useLocale();
   const { deferHeroEntrance } = useIntroReveal();
+  const [imageLoaded, setImageLoaded] = useState(false);
   const [mediaReady, setMediaReady] = useState(false);
-  const revealed = !deferHeroEntrance;
-  const runImageMotion = revealed && mediaReady;
+
+  useEffect(() => {
+    if (imageLoaded && !deferHeroEntrance) {
+      setMediaReady(true);
+    }
+  }, [imageLoaded, deferHeroEntrance]);
 
   return (
     <section
       id="hero"
-      className="relative h-screen w-full overflow-hidden bg-black -mt-[58px]"
+      className="relative h-screen w-full -mt-[88px] bg-[#020202] overflow-hidden"
     >
       <div
-        className={cn(
-          "absolute inset-0 origin-center will-change-transform",
-          "[backface-visibility:hidden]",
-          "motion-reduce:transition-none"
-        )}
+        className="absolute inset-0"
         style={{
-          transform: runImageMotion
-            ? "scale(1) translateZ(0)"
-            : `scale(${HERO_ENTRANCE.image.fromScale}) translateZ(0)`,
-          transitionProperty: "transform",
-          transitionDuration: runImageMotion
-            ? `${HERO_ENTRANCE.image.duration}s`
-            : "0s",
-          transitionTimingFunction: HERO_EASE_CSS,
+          opacity: mediaReady ? 1 : 0,
+          transform: mediaReady ? "scale(1) translateZ(0)" : "scale(1.04) translateZ(0)",
+          transition: "opacity 1.2s cubic-bezier(0.22,1,0.36,1), transform 2.5s cubic-bezier(0.05,0.8,0.2,1)",
+          willChange: "transform, opacity",
         }}
       >
         <Image
-          src={heroImg}
+          src={media.hero.src}
           alt="Aurelia"
           fill
           priority
+          unoptimized
+          loading="eager"
           fetchPriority="high"
-          className="object-cover grayscale opacity-90"
-          sizes="1200px"
-          onLoadingComplete={() => setMediaReady(true)}
+          className="object-contain object-[72%_center] grayscale contrast-[1.06] brightness-[1.02]"
+          sizes="100vw"
+          onLoad={() => setImageLoaded(true)}
         />
       </div>
-      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20 z-10" />
 
       <div className="absolute bottom-0 left-0 right-0 z-20 px-8 md:px-16 pb-12 md:pb-20 pt-24">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: revealed ? 1 : 0 }}
-          transition={{
-            delay: revealed ? HERO_ENTRANCE.edition.delay : 0,
-            duration: HERO_ENTRANCE.edition.duration,
-            ease: HERO_EASE,
+        <div
+          style={{
+            opacity: mediaReady ? 1 : 0,
+            transform: mediaReady ? "translateY(0) translateZ(0)" : "translateY(6px) translateZ(0)",
+            clipPath: mediaReady ? "inset(0 0 0 0)" : "inset(0 0 100% 0)",
+            transition: "opacity 1.2s cubic-bezier(0.16,1,0.3,1) 1.8s, transform 1.2s cubic-bezier(0.16,1,0.3,1) 1.8s, clip-path 1.2s cubic-bezier(0.16,1,0.3,1) 1.8s",
+            willChange: "transform, opacity, clip-path",
           }}
-          className="text-[9px] font-sans uppercase text-white/50 mb-4"
+          className="text-[9px] font-sans uppercase text-white/50 mb-4 tracking-[0.42em]"
         >
           {t(copy.hero.edition)}
-        </motion.div>
+        </div>
 
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: revealed ? 1 : 0, y: revealed ? 0 : 30 }}
-          transition={{
-            delay: revealed ? HERO_ENTRANCE.title.delay : 0,
-            duration: HERO_ENTRANCE.title.duration,
-            ease: HERO_EASE,
+        <h1
+          style={{
+            opacity: mediaReady ? 1 : 0,
+            transform: mediaReady ? "translateY(0) translateZ(0)" : "translateY(40px) translateZ(0)",
+            clipPath: mediaReady ? "inset(0 0 0 0)" : "inset(0 0 100% 0)",
+            transition: "opacity 1.6s cubic-bezier(0.16,1,0.3,1) 2.0s, transform 1.6s cubic-bezier(0.16,1,0.3,1) 2.0s, clip-path 1.4s cubic-bezier(0.16,1,0.3,1) 2.0s",
+            willChange: "transform, opacity, clip-path",
           }}
-          className="font-serif text-[clamp(4.5rem,18vw,9rem)] font-light leading-none text-white"
+          className="font-serif text-[clamp(4.5rem,18vw,9rem)] font-light leading-none text-white/95"
         >
           AURELIA
-        </motion.h1>
+        </h1>
 
-        <motion.p
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: revealed ? 1 : 0, y: revealed ? 0 : 30 }}
-          transition={{
-            delay: revealed ? HERO_ENTRANCE.tagline.delay : 0,
-            duration: HERO_ENTRANCE.tagline.duration,
-            ease: HERO_EASE,
+        <p
+          style={{
+            opacity: mediaReady ? 1 : 0,
+            transform: mediaReady ? "translateY(0) translateZ(0)" : "translateY(20px) translateZ(0)",
+            clipPath: mediaReady ? "inset(0 0 0 0)" : "inset(0 0 100% 0)",
+            transition: "opacity 1.4s cubic-bezier(0.16,1,0.3,1) 2.4s, transform 1.4s cubic-bezier(0.16,1,0.3,1) 2.4s, clip-path 1.2s cubic-bezier(0.16,1,0.3,1) 2.4s",
+            willChange: "transform, opacity, clip-path",
           }}
-          className="font-serif italic text-[clamp(1.2rem,2.5vw,2rem)] text-white/80 mt-3"
+          className="font-serif italic text-[clamp(1.2rem,2.5vw,2rem)] text-white/88 mt-3"
         >
           {t(copy.hero.tagline)}
-        </motion.p>
+        </p>
 
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: revealed ? 1 : 0, y: revealed ? 0 : 20 }}
-          transition={{
-            delay: revealed ? HERO_ENTRANCE.subtitle.delay : 0,
-            duration: HERO_ENTRANCE.subtitle.duration,
-            ease: HERO_EASE,
+        <p
+          style={{
+            opacity: mediaReady ? 1 : 0,
+            transform: mediaReady ? "translateY(0) translateZ(0)" : "translateY(14px) translateZ(0)",
+            clipPath: mediaReady ? "inset(0 0 0 0)" : "inset(0 0 100% 0)",
+            transition: "opacity 1.2s cubic-bezier(0.16,1,0.3,1) 2.7s, transform 1.2s cubic-bezier(0.16,1,0.3,1) 2.7s, clip-path 1.0s cubic-bezier(0.16,1,0.3,1) 2.7s",
+            willChange: "transform, opacity, clip-path",
           }}
           className="text-[8px] font-sans uppercase tracking-[0.45em] text-white/45 mt-4"
         >
           {t(copy.hero.subtitle)}
-        </motion.p>
+        </p>
       </div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: revealed ? 1 : 0 }}
-        transition={{
-          delay: revealed ? HERO_ENTRANCE.appointment.delay : 0,
-          duration: HERO_ENTRANCE.appointment.duration,
-          ease: HERO_EASE,
+      <div
+        style={{
+          opacity: mediaReady ? 1 : 0,
+          transition: "opacity 1s cubic-bezier(0.16,1,0.3,1) 3.0s",
         }}
-        className="absolute bottom-8 right-8 z-20 hidden md:block text-[8px] font-sans uppercase text-white/40"
+        className="absolute bottom-8 right-8 z-20 hidden md:block text-[8px] font-sans uppercase text-white/40 tracking-[0.38em]"
       >
         {t(copy.hero.appointmentOnly)}
-      </motion.div>
+      </div>
     </section>
   );
 }

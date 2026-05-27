@@ -7,6 +7,7 @@ import {
   useTransform,
 } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import CinematicSurface from "@/components/CinematicSurface";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 
 const easeLuxury = [0.22, 1, 0.36, 1] as const;
@@ -42,9 +43,10 @@ export default function DirectorManifesto() {
   }, [inView]);
 
   return (
-    <section
+    <CinematicSurface
       ref={sectionRef}
-      className="bg-background border-b border-foreground/10 overflow-hidden"
+      intenseGrain
+      className="border-b border-white/10 editorial-whitespace-xl"
     >
       <motion.div
         style={{ y: parallaxY }}
@@ -59,7 +61,7 @@ export default function DirectorManifesto() {
                 : undefined
             }
             transition={{ duration: 1.2, ease: easeLuxury }}
-            className="text-[8px] font-sans uppercase text-foreground/40 mb-14 md:mb-16"
+            className="text-[8px] font-sans uppercase text-white/40 mb-14 md:mb-16"
           >
             {t(copy.manifesto.label)}
           </motion.p>
@@ -75,7 +77,7 @@ export default function DirectorManifesto() {
             }}
             initial="hidden"
             animate={entered ? "visible" : "hidden"}
-            className="font-serif italic font-light text-[clamp(1.35rem,2.8vw,2.35rem)] leading-[1.45] text-foreground"
+            className="font-serif italic font-light text-[clamp(1.35rem,2.8vw,2.35rem)] leading-[1.45] text-white/92"
           >
             {quoteLines.map((line) => (
               <motion.span
@@ -92,7 +94,7 @@ export default function DirectorManifesto() {
             initial={{ opacity: 0, y: 10 }}
             animate={entered ? { opacity: 1, y: 0 } : undefined}
             transition={{ duration: 1.1, delay: 0.72, ease: easeLuxury }}
-            className="mt-12 text-[9px] font-sans uppercase tracking-[0.3em] text-foreground/50 will-change-transform"
+            className="mt-12 text-[9px] font-sans uppercase tracking-[0.3em] text-white/50 will-change-transform"
           >
             {t(copy.manifesto.attribution)}
           </motion.p>
@@ -103,10 +105,10 @@ export default function DirectorManifesto() {
               entered ? { width: 48, opacity: 1 } : undefined
             }
             transition={{ duration: 1.15, delay: 0.88, ease: easeLuxury }}
-            className="h-px bg-foreground/20 mx-auto mt-14"
+            className="h-px bg-white/20 mx-auto mt-14"
           />
         </div>
       </motion.div>
-    </section>
+    </CinematicSurface>
   );
 }

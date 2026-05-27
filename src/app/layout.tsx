@@ -1,7 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, DM_Sans } from "next/font/google";
 import Script from "next/script";
+import AppChrome from "@/components/AppChrome";
 import SessionIntro from "@/components/SessionIntro";
+import CinematicCursor from "@/components/CinematicCursor";
+import CookieConsent from "@/components/CookieConsent";
 import { IntroRevealProvider } from "@/lib/intro/IntroRevealContext";
 import { LocaleProvider } from "@/lib/i18n/LocaleProvider";
 import { copy, t } from "@/lib/i18n";
@@ -43,16 +46,16 @@ export default function RootLayout({
       lang={defaultLocale}
       className={`${dmSans.variable} ${cormorant.variable} h-full antialiased`}
     >
-      <body className="min-h-full overflow-x-clip bg-[#050505]">
+      <body className="min-h-full overflow-x-clip">
         <Script id="aurelia-session-intro" strategy="beforeInteractive">
           {INTRO_BOOT_SCRIPT}
         </Script>
         <LocaleProvider initialLocale={defaultLocale}>
           <IntroRevealProvider>
             <SessionIntro />
-            <div className="site-shell mx-auto w-full min-w-0 max-w-[var(--site-max-width)] min-h-full bg-background">
-              {children}
-            </div>
+            <CinematicCursor />
+            <AppChrome>{children}</AppChrome>
+            <CookieConsent />
           </IntroRevealProvider>
         </LocaleProvider>
       </body>
