@@ -325,6 +325,19 @@ export default function Founder() {
     mobileSwipeHint > 0
       ? (active - 1 + teamNames.length) % teamNames.length
       : (active + 1) % teamNames.length;
+  const mobileSlideVariants = {
+    hidden: (direction: 1 | -1) => ({
+      opacity: 0,
+      x: direction > 0 ? 36 : -36,
+      scale: 1.02,
+    }),
+    visible: { opacity: 1, x: 0, scale: 1 },
+    exit: (direction: 1 | -1) => ({
+      opacity: 0,
+      x: direction > 0 ? -28 : 28,
+      scale: 0.985,
+    }),
+  };
 
   return (
     <section
@@ -389,17 +402,10 @@ export default function Founder() {
           <motion.div
             key={`mobile-${teamNames[active].image}-${active}`}
             custom={mobileDirection}
-            initial={(direction: 1 | -1) => ({
-              opacity: 0,
-              x: direction > 0 ? 36 : -36,
-              scale: 1.02,
-            })}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            exit={(direction: 1 | -1) => ({
-              opacity: 0,
-              x: direction > 0 ? -28 : 28,
-              scale: 0.985,
-            })}
+            variants={mobileSlideVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
             transition={{ duration: 0.75, ease: easeCrossfade }}
             className="absolute inset-0"
             drag="x"
