@@ -47,8 +47,8 @@ export default function Services() {
       className="cinematic-section bg-layer-1 border-b border-editorial"
     >
       <div className="relative mx-auto max-w-[1200px] px-4 pt-24 pb-24 md:px-10 md:py-28">
-        <header className="flex flex-row items-center justify-between gap-4 pb-8 md:items-end md:gap-8 md:pb-14">
-          <div>
+        <header className="flex items-center justify-between gap-4 pb-8 md:items-end md:gap-8 md:pb-14">
+          <div className="min-w-0 self-center">
             <motion.p
               initial={{ opacity: 0, x: -12, letterSpacing: "0.28em" }}
               animate={
@@ -57,7 +57,7 @@ export default function Services() {
                   : undefined
               }
               transition={{ duration: 1.1, ease: easeReveal }}
-              className="text-[10px] font-sans uppercase text-foreground/40 mb-5"
+              className="mb-0 text-[10px] font-sans uppercase leading-none text-foreground/40"
             >
               {t(copy.disciplines.eyebrow)}
             </motion.p>
@@ -66,7 +66,7 @@ export default function Services() {
             initial={{ opacity: 0, x: 10 }}
             animate={entered ? { opacity: 1, x: 0 } : undefined}
             transition={{ duration: 1.1, delay: 0.15, ease: easeReveal }}
-            className="text-[10px] font-sans uppercase tracking-[0.34em] text-foreground/42 md:pb-2"
+            className="self-center text-right text-[10px] font-sans uppercase leading-none tracking-[0.34em] text-foreground/42 md:pb-2"
           >
             {t(copy.disciplines.aside)}
           </motion.p>

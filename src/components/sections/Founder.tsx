@@ -229,6 +229,8 @@ export default function Founder() {
   const [paused, setPaused] = useState(false);
   const [mobileDirection, setMobileDirection] = useState<1 | -1>(1);
   const [mobileSwipeHint, setMobileSwipeHint] = useState<1 | -1 | 0>(0);
+  const touchStartXRef = useRef<number | null>(null);
+  const touchStartYRef = useRef<number | null>(null);
 
   const team: TeamMember[] = teamNames.map((person, index) => {
     const entry = copy.founder.team[index];
@@ -374,7 +376,36 @@ export default function Founder() {
       </div>
 
       {/* Mobile: fullscreen portrait card (no quote) */}
-      <div className="relative z-10 md:hidden h-[100svh] overflow-hidden bg-[#f8f8f8]">
+      <div
+        className="relative z-10 md:hidden h-[100svh] overflow-hidden bg-[#f8f8f8]"
+        onTouchStart={(e) => {
+          touchStartXRef.current = e.changedTouches[0]?.clientX ?? null;
+          touchStartYRef.current = e.changedTouches[0]?.clientY ?? null;
+        }}
+        onTouchEnd={(e) => {
+          const startX = touchStartXRef.current;
+          const startY = touchStartYRef.current;
+          const endX = e.changedTouches[0]?.clientX ?? null;
+          const endY = e.changedTouches[0]?.clientY ?? null;
+          touchStartXRef.current = null;
+          touchStartYRef.current = null;
+
+          if (startX === null || startY === null || endX === null || endY === null) return;
+          const deltaX = endX - startX;
+          const deltaY = endY - startY;
+          if (Math.abs(deltaX) < SWIPE_THRESHOLD || Math.abs(deltaX) <= Math.abs(deltaY)) return;
+
+          setPaused(false);
+          setMobileSwipeHint(0);
+          if (deltaX < 0) {
+            setMobileDirection(1);
+            setActive((i) => (i + 1) % teamNames.length);
+          } else {
+            setMobileDirection(-1);
+            setActive((i) => (i - 1 + teamNames.length) % teamNames.length);
+          }
+        }}
+      >
         <motion.div
           className="absolute inset-0"
           initial={false}
@@ -409,6 +440,7 @@ export default function Founder() {
             transition={{ duration: 0.75, ease: easeCrossfade }}
             className="absolute inset-0"
             drag="x"
+            style={{ touchAction: "pan-y" }}
             dragConstraints={{ left: 0, right: 0 }}
             dragElastic={0.1}
             dragMomentum={false}

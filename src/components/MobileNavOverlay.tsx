@@ -33,13 +33,17 @@ function MobileNavLink({
   onNavigate: () => void;
 }) {
   return (
-    <a href={href} onClick={onNavigate} className="group block py-1.5">
+    <a
+      href={href}
+      onClick={onNavigate}
+      className="group block py-[clamp(0.06rem,0.55svh,0.44rem)]"
+    >
       <span
         className={cn(
-          "block font-serif text-[clamp(1.84rem,6.3vw,2.38rem)] font-light",
-          "leading-[1.28] tracking-[0.022em]",
-          "transition-[opacity,letter-spacing] duration-[640ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
-          "group-hover:opacity-[0.5] group-hover:tracking-[0.032em]",
+          "block font-serif text-[clamp(1.45rem,4.4svh,2.4rem)] font-light",
+          "leading-[1.18] tracking-[0.015em]",
+          "transition-[opacity,letter-spacing] duration-[700ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
+          "group-hover:opacity-[0.62] group-hover:tracking-[0.022em]",
           "group-active:opacity-[0.65]",
           p.fg
         )}
@@ -112,11 +116,11 @@ export default function MobileNavOverlay({
 
       return {
         dimVariants: fade(0.2),
-        panelVariants: fade(0.24, 0.04),
+        panelVariants: fade(0.3, 0.04),
         atmosphereVariants: fade(0.2, 0.06),
         listVariants: {
           hidden: {},
-          visible: { transition: { staggerChildren: 0.04, delayChildren: 0.08 } },
+          visible: { transition: { staggerChildren: 0.05, delayChildren: 0.12 } },
           exit: { transition: { staggerChildren: 0.03, staggerDirection: -1 } },
         },
         linkVariants: fade(0.2),
@@ -149,8 +153,8 @@ export default function MobileNavOverlay({
           y: 0,
           clipPath: "inset(0% 0% 0% 0%)",
           transition: {
-            duration: 0.66,
-            delay: 0.02,
+            duration: 0.74,
+            delay: 0.03,
             ease: NAV_EASE,
           },
         },
@@ -158,8 +162,8 @@ export default function MobileNavOverlay({
           y: 0,
           clipPath: "inset(0% 0% 100% 0%)",
           transition: {
-            duration: 0.52,
-            delay: 0.02,
+            duration: 0.6,
+            delay: 0.01,
             ease: NAV_EASE,
           },
         },
@@ -170,28 +174,28 @@ export default function MobileNavOverlay({
         visible: {
           opacity: 1,
           transition: {
-            duration: 0.82,
-            delay: 0.16,
+            duration: 0.88,
+            delay: 0.18,
             ease: NAV_EASE,
           },
         },
         exit: {
           opacity: 0,
           transition: {
-            duration: 0.3,
+            duration: 0.36,
             ease: NAV_EASE,
           },
         },
       } satisfies Variants,
 
       listVariants: {
-        hidden: { opacity: 0, y: 10 },
+        hidden: { opacity: 0, y: 14 },
         visible: {
           opacity: 1,
           y: 0,
           transition: {
-            staggerChildren: 0.055,
-            delayChildren: 0.34,
+            staggerChildren: 0.075,
+            delayChildren: 0.44,
           },
         },
         exit: {
@@ -205,18 +209,18 @@ export default function MobileNavOverlay({
       } satisfies Variants,
 
       linkVariants: {
-        hidden: { opacity: 0, y: 18, filter: "blur(6px)" },
+        hidden: { opacity: 0, y: 22, filter: "blur(8px)" },
         visible: {
           opacity: 1,
           y: 0,
           filter: "blur(0px)",
-          transition: { duration: 0.52, ease: NAV_EASE },
+          transition: { duration: 0.64, ease: NAV_EASE },
         },
         exit: {
           opacity: 0,
-          y: 0,
-          filter: "blur(5px)",
-          transition: { duration: 0.24, ease: NAV_EASE },
+          y: -2,
+          filter: "blur(6px)",
+          transition: { duration: 0.32, ease: NAV_EASE },
         },
       } satisfies Variants,
 
@@ -224,37 +228,37 @@ export default function MobileNavOverlay({
         hidden: { scaleX: 0, opacity: 0 },
         visible: {
           scaleX: 1,
-          opacity: 0.85,
+          opacity: 0.6,
           transition: {
-            duration: 0.56,
-            delay: 0.52,
+            duration: 0.64,
+            delay: 0.72,
             ease: NAV_EASE,
           },
         },
         exit: {
           scaleX: 0,
           opacity: 0,
-          transition: { duration: 0.18, ease: NAV_EASE },
+          transition: { duration: 0.24, ease: NAV_EASE },
         },
       } satisfies Variants,
 
       ctaVariants: {
-        hidden: { opacity: 0, y: 18, filter: "blur(6px)" },
+        hidden: { opacity: 0, y: 20, filter: "blur(7px)" },
         visible: {
           opacity: 1,
           y: 0,
           filter: "blur(0px)",
           transition: {
-            duration: 0.56,
-            delay: 0.34 + items.length * 0.055 + 0.12,
+            duration: 0.68,
+            delay: 0.46 + items.length * 0.075 + 0.18,
             ease: NAV_EASE,
           },
         },
         exit: {
           opacity: 0,
-          y: 0,
-          filter: "blur(5px)",
-          transition: { duration: 0.22, ease: NAV_EASE },
+          y: -2,
+          filter: "blur(6px)",
+          transition: { duration: 0.28, ease: NAV_EASE },
         },
       } satisfies Variants,
 
@@ -263,8 +267,8 @@ export default function MobileNavOverlay({
         visible: {
           opacity: 1,
           transition: {
-            duration: 0.5,
-            delay: 0.34 + items.length * 0.055 + 0.3,
+            duration: 0.56,
+            delay: 0.52 + items.length * 0.075 + 0.24,
             ease: NAV_EASE,
           },
         },
@@ -307,12 +311,6 @@ export default function MobileNavOverlay({
           >
             <motion.div className="mobile-nav-depth" aria-hidden />
             <motion.div className="mobile-nav-depth__vignette" aria-hidden />
-            <motion.div className="mobile-nav-depth__sheen" aria-hidden />
-
-            <div
-              className="mobile-nav-light-bloom mobile-nav-light-bloom--dark"
-              aria-hidden
-            />
 
             <motion.div
               className="mobile-nav-atmosphere mobile-nav-atmosphere--dark"
@@ -341,79 +339,83 @@ export default function MobileNavOverlay({
             />
 
             <motion.div
-              className="relative flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain px-8 pb-[max(2.5rem,env(safe-area-inset-bottom))] pt-12"
+              className="relative flex min-h-0 flex-1 flex-col overflow-hidden px-6 pb-[max(1rem,env(safe-area-inset-bottom))] pt-6 sm:px-8 sm:pt-8"
               initial="hidden"
               animate="visible"
               exit="exit"
               variants={motionSet.listVariants}
             >
-              <motion.div
-                className={cn(
-                  "mb-11 h-px w-[3.5rem] origin-left mobile-nav-accent-breathe",
-                  p.accent
-                )}
-                variants={motionSet.accentVariants}
-                aria-hidden
-              />
-
-              <ul className="flex flex-col gap-[1.75rem] sm:gap-[1.85rem]">
-                {items.map((item) => (
-                  <motion.li
-                    key={item.id}
-                    variants={motionSet.linkVariants}
-                    className="overflow-hidden"
-                  >
-                    <MobileNavLink
-                      href={item.href}
-                      label={item.label}
-                      onNavigate={onClose}
-                    />
-                  </motion.li>
-                ))}
-              </ul>
-
-              <motion.div
-                variants={motionSet.ctaVariants}
-                className="mt-[4.5rem] sm:mt-[5rem]"
-              >
-                <a
-                  href="#contact"
-                  onClick={onClose}
-                  className={cn(
-                    "group inline-flex flex-col items-start",
-                    p.fgCta
-                  )}
-                >
-                  <span className="text-[12px] font-sans font-normal uppercase tracking-[0.44em] transition-[opacity,letter-spacing] duration-[640ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:opacity-55 group-hover:tracking-[0.48em] group-active:opacity-72">
-                    {ctaLabel}
-                  </span>
-                  <span
+              <div className="flex min-h-0 flex-1 flex-col justify-between">
+                <div className="min-h-0">
+                  <motion.div
                     className={cn(
-                      "mt-3 block h-px w-[5rem] origin-left scale-y-[0.35] transition-[transform,opacity] duration-[820ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-x-[1.5] group-hover:opacity-95 group-active:scale-x-[1.25]",
-                      p.ctaRule
+                      "mb-[clamp(0.7rem,2.6svh,1.8rem)] h-px w-12 origin-left mobile-nav-accent-breathe",
+                      p.accent
                     )}
+                    variants={motionSet.accentVariants}
                     aria-hidden
                   />
-                  <span
-                    className={cn(
-                      "mt-3.5 font-sans text-[12px] uppercase tracking-[0.36em] leading-relaxed",
-                      p.fgMuted
-                    )}
-                  >
-                    {ctaSubline}
-                  </span>
-                </a>
-              </motion.div>
 
-              <motion.p
-                variants={motionSet.editionVariants}
-                className={cn(
-                  "mt-auto pt-14 font-sans text-[12px] uppercase tracking-[0.42em]",
-                  p.edition
-                )}
-              >
-                {editionMark}
-              </motion.p>
+                  <ul className="flex min-h-0 flex-col justify-center gap-[clamp(0.5rem,1.8svh,1.35rem)]">
+                    {items.map((item) => (
+                      <motion.li
+                        key={item.id}
+                        variants={motionSet.linkVariants}
+                        className="overflow-hidden"
+                      >
+                        <MobileNavLink
+                          href={item.href}
+                          label={item.label}
+                          onNavigate={onClose}
+                        />
+                      </motion.li>
+                    ))}
+                  </ul>
+
+                  <motion.div
+                    variants={motionSet.ctaVariants}
+                    className="mt-[clamp(0.85rem,3svh,2.2rem)] border-t border-white/8 pt-[clamp(0.7rem,2.2svh,1.25rem)]"
+                  >
+                    <a
+                      href="#contact"
+                      onClick={onClose}
+                      className={cn(
+                        "group inline-flex flex-col items-start",
+                        p.fgCta
+                      )}
+                    >
+                      <span className="text-[11px] font-sans font-normal uppercase tracking-[0.4em] transition-[opacity,letter-spacing] duration-[700ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:opacity-60 group-hover:tracking-[0.44em] group-active:opacity-72">
+                        {ctaLabel}
+                      </span>
+                      <span
+                        className={cn(
+                          "mt-[clamp(0.4rem,1.2svh,0.75rem)] block h-px w-20 origin-left scale-y-[0.35] transition-[transform,opacity] duration-[860ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-x-[1.3] group-hover:opacity-90 group-active:scale-x-[1.15]",
+                          p.ctaRule
+                        )}
+                        aria-hidden
+                      />
+                      <span
+                        className={cn(
+                          "mt-[clamp(0.35rem,1.2svh,0.8rem)] font-sans text-[10px] uppercase tracking-[0.34em] leading-relaxed",
+                          p.fgMuted
+                        )}
+                      >
+                        {ctaSubline}
+                      </span>
+                    </a>
+                  </motion.div>
+                </div>
+
+                <motion.p
+                  variants={motionSet.editionVariants}
+                  className={cn(
+                    "pt-[clamp(0.4rem,1.6svh,0.9rem)] font-sans text-[10px] uppercase tracking-[0.4em]",
+                    p.edition
+                  )}
+                >
+                  {editionMark}
+                </motion.p>
+              </div>
             </motion.div>
           </motion.div>
         </>

@@ -141,15 +141,15 @@ export default function Testimonial() {
             aria-hidden
           />
 
-          <AnimatePresence mode="wait" initial={false}>
+          <AnimatePresence initial={false}>
             <motion.div
               key={current.id}
               initial={
                 revealComplete ? { opacity: 0, y: 12 } : false
               }
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 1.35, ease: easeLuxury }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: revealComplete ? 0.55 : 1.05, ease: easeLuxury }}
               className="flex flex-col items-center will-change-[opacity,transform]"
             >
               <blockquote className="font-serif italic font-light text-[clamp(2rem,4.5vw,4rem)] leading-[1.35] tracking-[-0.01em] text-editorial-heading">
