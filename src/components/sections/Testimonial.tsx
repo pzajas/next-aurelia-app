@@ -141,17 +141,16 @@ export default function Testimonial() {
             aria-hidden
           />
 
-          <AnimatePresence initial={false}>
-            <motion.div
-              key={current.id}
-              initial={
-                revealComplete ? { opacity: 0, y: 12 } : false
-              }
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: revealComplete ? 0.55 : 1.05, ease: easeLuxury }}
-              className="flex flex-col items-center will-change-[opacity,transform]"
-            >
+          <div className="relative w-full min-h-[220px] md:min-h-[250px]">
+            <AnimatePresence initial={false}>
+              <motion.div
+                key={current.id}
+                initial={revealComplete ? { opacity: 0, y: 12 } : false}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: revealComplete ? 0.55 : 1.05, ease: easeLuxury }}
+                className="absolute inset-0 flex flex-col items-center justify-center will-change-[opacity,transform]"
+              >
               <blockquote className="font-serif italic font-light text-[clamp(2rem,4.5vw,4rem)] leading-[1.35] tracking-[-0.01em] text-editorial-heading">
                 {current.lines.map((line, i) =>
                   revealComplete ? (
@@ -180,26 +179,27 @@ export default function Testimonial() {
                 )}
               </blockquote>
 
-              {revealComplete ? (
-                <p className="mt-14 md:mt-16 text-[12px] font-sans uppercase tracking-[0.32em] text-editorial-micro">
-                  {current.attribution}
-                </p>
-              ) : (
-                <motion.p
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    duration: 1,
-                    delay: 0.62,
-                    ease: easeLuxury,
-                  }}
-                  className="mt-14 md:mt-16 text-[12px] font-sans uppercase tracking-[0.32em] text-editorial-micro"
-                >
-                  {current.attribution}
-                </motion.p>
-              )}
-            </motion.div>
-          </AnimatePresence>
+                {revealComplete ? (
+                  <p className="mt-14 md:mt-16 text-[12px] font-sans uppercase tracking-[0.32em] text-editorial-micro">
+                    {current.attribution}
+                  </p>
+                ) : (
+                  <motion.p
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      duration: 1,
+                      delay: 0.62,
+                      ease: easeLuxury,
+                    }}
+                    className="mt-14 md:mt-16 text-[12px] font-sans uppercase tracking-[0.32em] text-editorial-micro"
+                  >
+                    {current.attribution}
+                  </motion.p>
+                )}
+              </motion.div>
+            </AnimatePresence>
+          </div>
 
           <motion.span
             variants={revealRule}

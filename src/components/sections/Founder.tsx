@@ -231,6 +231,7 @@ export default function Founder() {
   const [mobileSwipeHint, setMobileSwipeHint] = useState<1 | -1 | 0>(0);
   const touchStartXRef = useRef<number | null>(null);
   const touchStartYRef = useRef<number | null>(null);
+  const mobileDragHandledRef = useRef(false);
 
   const team: TeamMember[] = teamNames.map((person, index) => {
     const entry = copy.founder.team[index];
@@ -383,6 +384,11 @@ export default function Founder() {
           touchStartYRef.current = e.changedTouches[0]?.clientY ?? null;
         }}
         onTouchEnd={(e) => {
+          if (mobileDragHandledRef.current) {
+            mobileDragHandledRef.current = false;
+            return;
+          }
+
           const startX = touchStartXRef.current;
           const startY = touchStartYRef.current;
           const endX = e.changedTouches[0]?.clientX ?? null;
@@ -445,6 +451,7 @@ export default function Founder() {
             dragElastic={0.1}
             dragMomentum={false}
             onDragStart={() => {
+              mobileDragHandledRef.current = true;
               setPaused(true);
             }}
             onDrag={(_, info) => {
