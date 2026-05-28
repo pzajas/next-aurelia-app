@@ -15,7 +15,7 @@ export default function ClosingManifesto() {
       className="relative overflow-hidden border-b border-editorial bg-layer-1"
       aria-hidden
     >
-      <div className="flex items-center justify-center px-10 py-32 md:py-44 lg:py-52">
+      <div className="flex items-center justify-center px-4 py-32 md:px-10 md:py-44 lg:py-52">
         <motion.div
           initial={{ opacity: 0, scaleY: 0 }}
           animate={inView ? { opacity: 1, scaleY: 1 } : undefined}

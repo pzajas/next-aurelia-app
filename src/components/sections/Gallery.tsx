@@ -413,7 +413,7 @@ export default function Gallery() {
       id="works"
       intenseGrain
       className="py-16 md:py-20"
-      contentClassName="mx-auto w-full max-w-[1280px] px-10 md:px-10"
+      contentClassName="mx-auto w-full max-w-[1280px] px-4 md:px-10"
     >
       <motion.div
         initial={{ opacity: 0 }}
@@ -426,7 +426,7 @@ export default function Gallery() {
             <p className="font-sans text-[12px] uppercase tracking-[0.42em] text-white/36">
               {t(copy.gallery.brand)}
             </p>
-            <p className="font-sans text-[12px] uppercase tracking-[0.36em] text-white/26">
+            <p className="hidden font-sans text-[12px] uppercase tracking-[0.36em] text-white/26 md:block">
               {t(copy.gallery.atelier)}
             </p>
           </div>
@@ -434,7 +434,7 @@ export default function Gallery() {
             <p className="font-sans text-[12px] uppercase tracking-[0.42em] text-white/36">
               {t(copy.gallery.selectedWorks)}
             </p>
-            <p className="font-sans text-[12px] uppercase tracking-[0.36em] text-white/26">
+            <p className="hidden font-sans text-[12px] uppercase tracking-[0.36em] text-white/26 md:block">
               {t(copy.gallery.volume)}
             </p>
           </div>
@@ -468,33 +468,82 @@ export default function Gallery() {
         </div>
 
         <div className="md:hidden">
-          <div
-            className="grid w-full grid-cols-2"
-            style={{
-              gap: 20,
-              gridTemplateRows: "1.2fr 0.5fr 1fr 1.1fr 1fr 0.9fr 1fr 1fr",
-              minHeight: "720px",
-            }}
-          >
-            <QuoteTile
-              line1={t(copy.gallery.quoteLine1)}
-              line2={t(copy.gallery.quoteLine2)}
-              span={MOBILE_QUOTE}
-            />
-            {MOBILE_TILES.map((tile) => (
-              <PhotoTile
-                key={tile.id}
-                tile={tile}
-                alt={t(copy.gallery.alts[tile.altIndex])}
-                sizes="50vw"
-                onOpen={setLightbox}
-                label={
-                  tile.labelIndex !== undefined
-                    ? t(copy.gallery.hoverLabels[tile.labelIndex])
-                    : undefined
-                }
-              />
-            ))}
+          <div className="flex flex-col gap-4">
+            {MOBILE_TILES.slice(0, 3).map((tile) => {
+              const asset = lookupMedia(tile.src);
+              return (
+                <button
+                  key={tile.id}
+                  type="button"
+                  onClick={() =>
+                    setLightbox({
+                      src: asset.src,
+                      width: asset.width,
+                      height: asset.height,
+                      alt: t(copy.gallery.alts[tile.altIndex]),
+                      objectPosition: tile.objectPosition,
+                    })
+                  }
+                  className="relative block w-full overflow-hidden bg-[#0a0a0a]"
+                >
+                  <div className="relative aspect-[4/5]">
+                    <Image
+                      src={tile.src}
+                      alt={t(copy.gallery.alts[tile.altIndex])}
+                      fill
+                      quality={80}
+                      loading={tile.priority ? "eager" : "lazy"}
+                      priority={tile.priority}
+                      className="object-cover"
+                      style={{ objectPosition: tile.objectPosition }}
+                      sizes="100vw"
+                    />
+                  </div>
+                </button>
+              );
+            })}
+
+            <div className="bg-[#0a0a0a] px-5 py-8 text-center">
+              <p className="font-serif text-[clamp(1.5rem,7.2vw,2rem)] italic leading-[1.5] text-white/88">
+                {t(copy.gallery.quoteLine1)}
+                <br />
+                {t(copy.gallery.quoteLine2)}
+              </p>
+              <div className="mx-auto mt-3 h-px w-8 bg-white/24" aria-hidden />
+            </div>
+
+            {MOBILE_TILES.slice(3).map((tile) => {
+              const asset = lookupMedia(tile.src);
+              return (
+                <button
+                  key={tile.id}
+                  type="button"
+                  onClick={() =>
+                    setLightbox({
+                      src: asset.src,
+                      width: asset.width,
+                      height: asset.height,
+                      alt: t(copy.gallery.alts[tile.altIndex]),
+                      objectPosition: tile.objectPosition,
+                    })
+                  }
+                  className="relative block w-full overflow-hidden bg-[#0a0a0a]"
+                >
+                  <div className="relative aspect-[4/5]">
+                    <Image
+                      src={tile.src}
+                      alt={t(copy.gallery.alts[tile.altIndex])}
+                      fill
+                      quality={80}
+                      loading="lazy"
+                      className="object-cover"
+                      style={{ objectPosition: tile.objectPosition }}
+                      sizes="100vw"
+                    />
+                  </div>
+                </button>
+              );
+            })}
           </div>
         </div>
 

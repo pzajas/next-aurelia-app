@@ -138,31 +138,29 @@ export default function MobileNavOverlay({
           transition: {
             duration: t.close.dim,
             delay: t.close.dimDelay,
-            ease: NAV_EASE_SNAP,
+            ease: NAV_EASE,
           },
         },
       } satisfies Variants,
 
       panelVariants: {
-        hidden: { opacity: 0, y: 24, filter: "blur(12px)" },
+        hidden: { y: 0, clipPath: "inset(0% 0% 100% 0%)" },
         visible: {
-          opacity: 1,
           y: 0,
-          filter: "blur(0px)",
+          clipPath: "inset(0% 0% 0% 0%)",
           transition: {
-            duration: t.open.panel,
-            delay: t.open.panelDelay,
+            duration: 0.66,
+            delay: 0.02,
             ease: NAV_EASE,
           },
         },
         exit: {
-          opacity: 0,
-          y: 14,
-          filter: "blur(8px)",
+          y: 0,
+          clipPath: "inset(0% 0% 100% 0%)",
           transition: {
-            duration: t.close.panel,
-            delay: t.close.panelDelay,
-            ease: NAV_EASE_SNAP,
+            duration: 0.52,
+            delay: 0.02,
+            ease: NAV_EASE,
           },
         },
       } satisfies Variants,
@@ -172,48 +170,53 @@ export default function MobileNavOverlay({
         visible: {
           opacity: 1,
           transition: {
-            duration: t.open.atmosphere,
-            delay: t.open.atmosphereDelay,
+            duration: 0.82,
+            delay: 0.16,
             ease: NAV_EASE,
           },
         },
         exit: {
           opacity: 0,
           transition: {
-            duration: t.close.atmosphere,
-            delay: t.close.atmosphereDelay,
-            ease: NAV_EASE_SNAP,
+            duration: 0.3,
+            ease: NAV_EASE,
           },
         },
       } satisfies Variants,
 
       listVariants: {
-        hidden: {},
+        hidden: { opacity: 0, y: 10 },
         visible: {
+          opacity: 1,
+          y: 0,
           transition: {
-            staggerChildren: t.open.linkStagger,
-            delayChildren: t.open.linkDelay,
+            staggerChildren: 0.055,
+            delayChildren: 0.34,
           },
         },
         exit: {
+          opacity: 0,
+          y: 0,
           transition: {
-            staggerChildren: t.close.linkStagger,
+            staggerChildren: 0.03,
             staggerDirection: -1,
           },
         },
       } satisfies Variants,
 
       linkVariants: {
-        hidden: { opacity: 0, y: 10 },
+        hidden: { opacity: 0, y: 18, filter: "blur(6px)" },
         visible: {
           opacity: 1,
           y: 0,
-          transition: { duration: t.open.linkDuration, ease: NAV_EASE },
+          filter: "blur(0px)",
+          transition: { duration: 0.52, ease: NAV_EASE },
         },
         exit: {
           opacity: 0,
-          y: -8,
-          transition: { duration: t.close.linkDuration, ease: NAV_EASE_SNAP },
+          y: 0,
+          filter: "blur(5px)",
+          transition: { duration: 0.24, ease: NAV_EASE },
         },
       } satisfies Variants,
 
@@ -223,36 +226,35 @@ export default function MobileNavOverlay({
           scaleX: 1,
           opacity: 0.85,
           transition: {
-            duration: t.open.accentLine,
-            delay: t.open.accentDelay,
+            duration: 0.56,
+            delay: 0.52,
             ease: NAV_EASE,
           },
         },
         exit: {
           scaleX: 0,
           opacity: 0,
-          transition: { duration: t.close.accent, ease: NAV_EASE_SNAP },
+          transition: { duration: 0.18, ease: NAV_EASE },
         },
       } satisfies Variants,
 
       ctaVariants: {
-        hidden: { opacity: 0, y: 12 },
+        hidden: { opacity: 0, y: 18, filter: "blur(6px)" },
         visible: {
           opacity: 1,
           y: 0,
+          filter: "blur(0px)",
           transition: {
-            duration: t.open.linkDuration,
-            delay:
-              t.open.linkDelay +
-              items.length * t.open.linkStagger +
-              t.open.ctaExtraDelay,
+            duration: 0.56,
+            delay: 0.34 + items.length * 0.055 + 0.12,
             ease: NAV_EASE,
           },
         },
         exit: {
           opacity: 0,
-          y: 6,
-          transition: { duration: t.close.linkDuration, ease: NAV_EASE_SNAP },
+          y: 0,
+          filter: "blur(5px)",
+          transition: { duration: 0.22, ease: NAV_EASE },
         },
       } satisfies Variants,
 
@@ -261,18 +263,14 @@ export default function MobileNavOverlay({
         visible: {
           opacity: 1,
           transition: {
-            duration: t.open.linkDuration,
-            delay:
-              t.open.linkDelay +
-              items.length * t.open.linkStagger +
-              t.open.ctaExtraDelay +
-              t.open.editionDelay,
+            duration: 0.5,
+            delay: 0.34 + items.length * 0.055 + 0.3,
             ease: NAV_EASE,
           },
         },
         exit: {
           opacity: 0,
-          transition: { duration: t.close.edition, ease: NAV_EASE_SNAP },
+          transition: { duration: 0.2, ease: NAV_EASE },
         },
       } satisfies Variants,
     };
@@ -288,7 +286,7 @@ export default function MobileNavOverlay({
             key="nav-dim"
             type="button"
             aria-label="Close menu"
-            className="fixed inset-0 z-[180] bg-[#0A0A0A] md:hidden outline-none [-webkit-tap-highlight-color:transparent]"
+            className="fixed inset-x-0 bottom-0 top-[var(--site-header-height,58px)] z-[180] bg-[#0A0A0A] md:hidden outline-none [-webkit-tap-highlight-color:transparent]"
             initial="hidden"
             animate="visible"
             exit="exit"
@@ -301,7 +299,7 @@ export default function MobileNavOverlay({
             id="mobile-nav"
             role="dialog"
             aria-modal="true"
-            className="fixed inset-0 z-[185] flex flex-col overflow-hidden border-0 outline-none md:hidden"
+            className="fixed inset-x-0 bottom-0 top-[var(--site-header-height,58px)] z-[185] flex flex-col overflow-hidden border-0 outline-none md:hidden"
             initial="hidden"
             animate="visible"
             exit="exit"
@@ -343,7 +341,7 @@ export default function MobileNavOverlay({
             />
 
             <motion.div
-              className="relative flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain px-8 pb-[max(2.5rem,env(safe-area-inset-bottom))] pt-[calc(58px+2.85rem)]"
+              className="relative flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain px-8 pb-[max(2.5rem,env(safe-area-inset-bottom))] pt-12"
               initial="hidden"
               animate="visible"
               exit="exit"

@@ -43,7 +43,7 @@ export default function DirectorManifesto() {
       intenseGrain
       className="border-b border-white/10 editorial-whitespace-xl"
     >
-      <motion.div style={{ y: parallaxY }} className="px-10 py-24 md:py-32">
+      <motion.div style={{ y: parallaxY }} className="px-4 py-24 md:px-10 md:py-32">
         <div className="mx-auto max-w-3xl text-center">
           <motion.p
             initial={{ opacity: 0, x: -16, letterSpacing: "0.28em" }}
@@ -51,7 +51,7 @@ export default function DirectorManifesto() {
               entered ? { opacity: 1, x: 0, letterSpacing: "0.4em" } : undefined
             }
             transition={{ duration: 1.2, ease: easeLuxury }}
-            className="text-[12px] font-sans uppercase text-white/40 mb-14 md:mb-16"
+            className="text-[9px] md:text-[12px] font-sans uppercase text-white/40 mb-14 md:mb-16"
           >
             {t(copy.manifesto.label)}
           </motion.p>
@@ -84,7 +84,7 @@ export default function DirectorManifesto() {
             initial={{ opacity: 0, y: 10 }}
             animate={entered ? { opacity: 1, y: 0 } : undefined}
             transition={{ duration: 1.1, delay: 0.72, ease: easeLuxury }}
-            className="mt-12 text-[12px] font-sans uppercase tracking-[0.3em] text-white/50 will-change-transform"
+            className="mt-12 text-[9px] md:text-[12px] font-sans uppercase tracking-[0.3em] text-white/50 will-change-transform"
           >
             {t(copy.manifesto.attribution)}
           </motion.p>

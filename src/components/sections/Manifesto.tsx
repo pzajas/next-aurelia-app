@@ -9,7 +9,7 @@ export default function Manifesto() {
 
   return (
     <section className="py-32 md:py-64 bg-foreground text-background relative z-10" ref={ref}>
-      <div className="max-w-[1400px] mx-auto px-10 md:px-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-16">
+      <div className="max-w-[1400px] mx-auto px-4 md:px-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-16">
         <motion.div
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : { opacity: 0 }}

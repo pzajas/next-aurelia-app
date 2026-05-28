@@ -57,6 +57,7 @@ export default function Testimonial() {
   const [active, setActive] = useState(0);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [paused, setPaused] = useState(false);
+  const touchStartX = useRef<number | null>(null);
 
   const testimonials = copy.testimonials.items.map((item, index) => ({
     id: String(index + 1).padStart(2, "0"),
@@ -96,7 +97,7 @@ export default function Testimonial() {
         aria-hidden
       />
 
-      <div className="relative px-10 pt-28 pb-36 md:pt-40 md:pb-48 lg:pt-48 lg:pb-56">
+      <div className="relative px-4 pt-28 pb-36 md:px-10 md:pt-40 md:pb-48 lg:pt-48 lg:pb-56">
         <motion.p
           variants={revealLabel}
           initial="hidden"
@@ -110,6 +111,22 @@ export default function Testimonial() {
           variants={revealQuoteShell}
           initial="hidden"
           animate={entered ? "visible" : "hidden"}
+          onTouchStart={(e) => {
+            touchStartX.current = e.changedTouches[0]?.clientX ?? null;
+          }}
+          onTouchEnd={(e) => {
+            const startX = touchStartX.current;
+            const endX = e.changedTouches[0]?.clientX ?? null;
+            touchStartX.current = null;
+            if (startX === null || endX === null) return;
+            const delta = endX - startX;
+            if (Math.abs(delta) < 38) return;
+            if (delta < 0) {
+              setActive((i) => (i + 1) % testimonials.length);
+            } else {
+              setActive((i) => (i - 1 + testimonials.length) % testimonials.length);
+            }
+          }}
           onAnimationComplete={() => {
             if (entered) setRevealComplete(true);
           }}
@@ -198,7 +215,7 @@ export default function Testimonial() {
           variants={revealNav}
           initial="hidden"
           animate={entered ? "visible" : "hidden"}
-          className="mx-auto mt-20 md:mt-28 flex max-w-3xl flex-col items-center gap-8 md:flex-row md:justify-center md:gap-0"
+          className="mx-auto mt-20 md:mt-28 hidden md:flex max-w-3xl flex-col items-center gap-8 md:flex-row md:justify-center md:gap-0"
           onMouseLeave={() => setHoveredIndex(null)}
         >
           {testimonials.map((item, index) => {
@@ -252,6 +269,20 @@ export default function Testimonial() {
             );
           })}
         </motion.div>
+        <div className="mt-6 flex items-center justify-center gap-3 md:hidden" aria-hidden>
+          {testimonials.map((item, index) => (
+            <span
+              key={`dot-${item.id}`}
+              style={{ width: index === active ? 44 : 16 }}
+              className={cn(
+                "block h-px transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                index === active ? "bg-foreground/60" : "bg-foreground/22"
+              )}
+            >
+              &nbsp;
+            </span>
+          ))}
+        </div>
       </div>
     </section>
   );

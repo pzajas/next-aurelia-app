@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import CinematicSurface from "@/components/CinematicSurface";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 const leftLinks = [
   { key: "atelier" as const, href: "#atelier" },
@@ -24,7 +24,7 @@ function FooterNavLink({ href, label }: { href: string; label: string }) {
       className={cn(
         "group relative inline-block whitespace-nowrap py-1 text-[10px] font-sans uppercase tracking-[0.38em] text-white/42",
         "transition-[color,letter-spacing] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
-        "hover:text-white/78 hover:tracking-[0.44em]"
+        "hover:text-white/78 hover:tracking-[0.44em]",
       )}
     >
       {label}
@@ -65,7 +65,7 @@ export default function Footer() {
           className={cn(
             "absolute right-0 top-[4.25rem] bottom-0 z-10 my-auto hidden h-fit cursor-pointer md:top-[4.75rem] md:flex",
             "flex-col items-center gap-1.5 text-[10px] font-sans uppercase tracking-[0.38em] text-white/26",
-            "transition-colors duration-500 hover:text-white/52"
+            "transition-colors duration-500 hover:text-white/52",
           )}
           aria-label={t(copy.footer.backToTop)}
         >

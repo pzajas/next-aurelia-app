@@ -1,10 +1,11 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
-import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 import { cn } from "@/lib/utils";
+import { motion, useInView } from "framer-motion";
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 
 const easeReveal = [0.22, 1, 0.36, 1] as const;
 const easeEditorial = [0.19, 1, 0.22, 1] as const;
@@ -28,6 +29,13 @@ export default function Services() {
     name: t(copy.disciplines.items[index].name),
     desc: t(copy.disciplines.items[index].desc),
   }));
+  const mobileDisciplineImages = [
+    "/images/founder-ok.avif",
+    "/images/founder-margaux.avif",
+    "/images/founder-elias.avif",
+    "/images/founder-amelie.avif",
+    "/images/founder-ok.avif",
+  ] as const;
 
   useEffect(() => {
     if (inView) setEntered(true);
@@ -38,8 +46,8 @@ export default function Services() {
       ref={sectionRef}
       className="cinematic-section bg-layer-1 border-b border-editorial"
     >
-      <div className="relative mx-auto max-w-[1200px] px-10 py-20 md:py-28">
-        <header className="flex flex-col gap-8 pb-10 md:flex-row md:items-end md:justify-between md:pb-14">
+      <div className="relative mx-auto max-w-[1200px] px-4 pt-24 pb-24 md:px-10 md:py-28">
+        <header className="flex flex-row items-center justify-between gap-4 pb-8 md:items-end md:gap-8 md:pb-14">
           <div>
             <motion.p
               initial={{ opacity: 0, x: -12, letterSpacing: "0.28em" }}
@@ -65,110 +73,148 @@ export default function Services() {
         </header>
 
         <div>
-          <div className="relative" onMouseLeave={() => setHoveredId(null)}>
-              {services.map((service, index) => {
-                const rowDelay = 0.32 + index * STAGGER;
-                const isHovered = hoveredId === service.id;
-                const dimSiblings = hoveredId !== null && !isHovered;
+          <div className="md:hidden border-t border-editorial/80">
+            {services.map((service, index) => (
+              <motion.article
+                key={`mobile-${service.id}`}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-8% 0px" }}
+                transition={{ duration: 0.8, delay: index * 0.06, ease: easeReveal }}
+                className="mb-4 grid grid-cols-[minmax(0,1fr)_42%] gap-3 border-b border-editorial/80 last:mb-0"
+              >
+                <div className="px-0 py-6">
+                  <p className="font-serif text-[3rem] font-light leading-[0.9] tracking-[0.02em] text-foreground">
+                    {service.id}
+                  </p>
+                  <h3 className="mt-2 font-serif text-[1.95rem] font-light leading-[0.95] tracking-[-0.01em] text-foreground">
+                    {service.name}
+                  </h3>
+                  <p className={cn(microLabelClass, "mt-4 max-w-[14rem] text-foreground/60")}>
+                    {service.desc}
+                  </p>
+                </div>
+                <div className="relative min-h-[148px] overflow-hidden">
+                  <Image
+                    src={mobileDisciplineImages[index] ?? mobileDisciplineImages[0]}
+                    alt={service.name}
+                    fill
+                    className="object-cover grayscale object-[72%_35%]"
+                    sizes="42vw"
+                  />
+                  <div
+                    className="pointer-events-none absolute inset-y-0 left-0 w-14 bg-gradient-to-r from-layer-1 via-layer-1/65 to-transparent"
+                    aria-hidden
+                  />
+                </div>
+              </motion.article>
+            ))}
+          </div>
 
-                return (
-                  <motion.article
-                    key={service.id}
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{
-                      opacity: entered ? (dimSiblings ? 0.65 : 1) : 0,
-                      y: entered ? 0 : 12,
-                    }}
-                    transition={{
-                      opacity: { ...hoverTransition, duration: 1.3 },
-                      y: {
-                        duration: 1.15,
-                        delay: rowDelay,
-                        ease: easeReveal,
-                      },
-                    }}
-                    className="relative cursor-pointer"
-                    onMouseEnter={() => setHoveredId(service.id)}
-                  >
-                    <div className="grid items-center grid-cols-[1fr] gap-x-4 py-8 md:grid-cols-[minmax(24rem,48%)_minmax(0,1fr)_1.6rem] md:gap-x-8 md:py-10">
-                      <div className="flex items-baseline gap-6 md:gap-7">
-                        <motion.span
-                          animate={{
-                            opacity: isHovered ? 1 : 0.24,
-                            scale: isHovered ? 1.18 : 1,
-                            color: isHovered
-                              ? "rgba(0,0,0,1)"
-                              : "rgba(17,17,17,0.35)",
-                          }}
-                          transition={hoverTransition}
-                          style={{ transformOrigin: "left center" }}
-                          className="inline-block font-serif text-[clamp(2rem,3vw,2.8rem)] font-light leading-none tabular-nums tracking-[0.03em]"
-                        >
-                          {service.id}
-                        </motion.span>
+          <div className="relative hidden md:block" onMouseLeave={() => setHoveredId(null)}>
+            {services.map((service, index) => {
+              const rowDelay = 0.32 + index * STAGGER;
+              const isHovered = hoveredId === service.id;
+              const dimSiblings = hoveredId !== null && !isHovered;
 
-                        <motion.h3
-                          animate={{
-                            x: isHovered ? 3 : 0,
-                            letterSpacing: isHovered ? "-0.008em" : "0em",
-                            opacity: isHovered ? 1 : 0.96,
-                            color: isHovered
-                              ? "rgba(0,0,0,0.98)"
-                              : "rgba(17,17,17,0.96)",
-                          }}
-                          transition={hoverTransition}
-                          className="max-w-none font-serif text-[clamp(1.8rem,2.55vw,2.65rem)] font-light leading-none tracking-[-0.01em] text-foreground will-change-transform"
-                        >
-                          {service.name}
-                        </motion.h3>
-                      </div>
-
-                      <motion.p
+              return (
+                <motion.article
+                  key={service.id}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{
+                    opacity: entered ? (dimSiblings ? 0.65 : 1) : 0,
+                    y: entered ? 0 : 12,
+                  }}
+                  transition={{
+                    opacity: { ...hoverTransition, duration: 1.3 },
+                    y: {
+                      duration: 1.15,
+                      delay: rowDelay,
+                      ease: easeReveal,
+                    },
+                  }}
+                  className="relative cursor-pointer"
+                  onMouseEnter={() => setHoveredId(service.id)}
+                >
+                  <div className="grid items-center grid-cols-[1fr] gap-x-4 py-8 md:grid-cols-[minmax(24rem,48%)_minmax(0,1fr)_1.6rem] md:gap-x-8 md:py-10">
+                    <div className="flex items-baseline gap-6 md:gap-7">
+                      <motion.span
                         animate={{
-                          opacity: isHovered ? 0.78 : 0.5,
+                          opacity: isHovered ? 1 : 0.24,
+                          scale: isHovered ? 1.18 : 1,
                           color: isHovered
-                            ? "rgba(0,0,0,0.9)"
-                            : "rgba(17,17,17,0.4)",
+                            ? "rgba(0,0,0,1)"
+                            : "rgba(17,17,17,0.35)",
                         }}
                         transition={hoverTransition}
-                        className={cn(
-                          microLabelClass,
-                          "mt-3 pr-6 md:mt-0 md:pr-0 md:text-right"
-                        )}
+                        style={{ transformOrigin: "left center" }}
+                        className="inline-block font-serif text-[clamp(2rem,3vw,2.8rem)] font-light leading-none tabular-nums tracking-[0.03em]"
                       >
-                        {service.desc}
-                      </motion.p>
-
-                      <motion.span
-                        initial={false}
-                        animate={{
-                          opacity: isHovered ? 0.85 : 0,
-                          x: isHovered ? 0 : -6,
-                        }}
-                        transition={{ ...hoverTransition, duration: 0.8 }}
-                        className="pointer-events-none justify-self-end font-sans text-[10px] text-foreground/80"
-                        aria-hidden
-                      >
-                        →
+                        {service.id}
                       </motion.span>
+
+                      <motion.h3
+                        animate={{
+                          x: isHovered ? 3 : 0,
+                          letterSpacing: isHovered ? "-0.008em" : "0em",
+                          opacity: isHovered ? 1 : 0.96,
+                          color: isHovered
+                            ? "rgba(0,0,0,0.98)"
+                            : "rgba(17,17,17,0.96)",
+                        }}
+                        transition={hoverTransition}
+                        className="max-w-none font-serif text-[clamp(1.8rem,2.55vw,2.65rem)] font-light leading-none tracking-[-0.01em] text-foreground will-change-transform"
+                      >
+                        {service.name}
+                      </motion.h3>
                     </div>
 
-                    <motion.div
-                      className="pointer-events-none absolute bottom-0 left-0 h-px w-[5.2rem] origin-left scale-y-[0.35]"
+                    <motion.p
+                      animate={{
+                        opacity: isHovered ? 0.78 : 0.5,
+                        color: isHovered
+                          ? "rgba(0,0,0,0.9)"
+                          : "rgba(17,17,17,0.4)",
+                      }}
+                      transition={hoverTransition}
+                      className={cn(
+                        microLabelClass,
+                        "mt-3 pr-6 md:mt-0 md:pr-0 md:text-right",
+                      )}
+                    >
+                      {service.desc}
+                    </motion.p>
+
+                    <motion.span
                       initial={false}
                       animate={{
-                        scaleX: isHovered ? 1 : 0,
-                        backgroundColor: isHovered
-                          ? "rgba(0,0,0,1)"
-                          : "rgba(17,17,17,0.4)",
-                        opacity: isHovered ? 0.95 : 0.55,
+                        opacity: isHovered ? 0.85 : 0,
+                        x: isHovered ? 0 : -6,
                       }}
-                      transition={{ duration: 1.1, ease: easeEditorial }}
+                      transition={{ ...hoverTransition, duration: 0.8 }}
+                      className="pointer-events-none justify-self-end font-sans text-[10px] text-foreground/80"
                       aria-hidden
-                    />
-                  </motion.article>
-                );
-              })}
+                    >
+                      →
+                    </motion.span>
+                  </div>
+
+                  <motion.div
+                    className="pointer-events-none absolute bottom-0 left-0 h-px w-[5.2rem] origin-left scale-y-[0.35]"
+                    initial={false}
+                    animate={{
+                      scaleX: isHovered ? 1 : 0,
+                      backgroundColor: isHovered
+                        ? "rgba(0,0,0,1)"
+                        : "rgba(17,17,17,0.4)",
+                      opacity: isHovered ? 0.95 : 0.55,
+                    }}
+                    transition={{ duration: 1.1, ease: easeEditorial }}
+                    aria-hidden
+                  />
+                </motion.article>
+              );
+            })}
           </div>
 
           <motion.div
@@ -177,28 +223,46 @@ export default function Services() {
             transition={{ duration: 1.05, delay: 0.78, ease: easeReveal }}
             className="relative overflow-visible"
           >
-            <div className="relative flex flex-col md:flex-row md:items-center">
-              <div className="flex flex-col justify-center py-8 md:py-10 md:pr-10 lg:pr-14 md:min-w-[220px] lg:min-w-[260px]">
-                <p
-                  className={cn(
-                    microLabelClass,
-                    "text-foreground/65"
-                  )}
+            <div className="relative flex md:hidden items-center pt-1">
+              <div className="flex flex-1 items-center justify-center py-4 text-center">
+                <p className={cn(microLabelClass, "translate-y-[2px] text-foreground/65")}>
+                  {t(copy.disciplines.atelierMenu.link)}
+                </p>
+              </div>
+
+              <Link
+                href="#contact"
+                className="group flex flex-1 items-center justify-center gap-2 py-4 text-center"
+              >
+                <span className={cn(microLabelClass, "translate-y-[2px] text-foreground/60")}>
+                  Poznaj usługi
+                </span>
+                <span
+                  className="inline-flex shrink-0 items-center justify-center translate-y-[2px] font-sans text-[10px] text-foreground/55 transition-transform duration-700 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:translate-x-[3px]"
+                  aria-hidden
                 >
+                  →
+                </span>
+              </Link>
+            </div>
+
+            <div className="relative hidden md:flex md:items-center">
+              <div className="flex flex-col justify-center py-10 md:pr-10 lg:pr-14 md:min-w-[220px] lg:min-w-[260px]">
+                <p className={cn(microLabelClass, "text-foreground/65")}>
                   {t(copy.disciplines.atelierMenu.link)}
                 </p>
               </div>
 
               <div
-                className="hidden md:block h-14 w-px shrink-0 self-center bg-foreground/10 lg:h-16"
+                className="h-14 w-px shrink-0 self-center bg-foreground/10 lg:h-16"
                 aria-hidden
               />
 
-              <div className="flex flex-1 items-center py-7 md:py-10 md:px-10 lg:px-14">
+              <div className="flex flex-1 items-center py-10 md:px-10 lg:px-14">
                 <p
                   className={cn(
                     microLabelClass,
-                    "text-foreground/50 md:mx-auto md:max-w-[360px] md:text-center"
+                    "text-foreground/50 md:mx-auto md:max-w-[360px] md:text-center",
                   )}
                 >
                   {t(copy.disciplines.atelierMenu.description)}
@@ -206,18 +270,18 @@ export default function Services() {
               </div>
 
               <div
-                className="hidden md:block h-14 w-px shrink-0 self-center bg-foreground/10 lg:h-16"
+                className="h-14 w-px shrink-0 self-center bg-foreground/10 lg:h-16"
                 aria-hidden
               />
 
               <Link
                 href="#contact"
-                className="group flex cursor-pointer items-center justify-between gap-4 overflow-visible py-7 pr-2 md:min-w-[230px] md:justify-end md:gap-5 md:py-10 md:pl-10 md:pr-4 lg:min-w-[290px] lg:pl-14"
+                className="group flex cursor-pointer items-center justify-between gap-5 overflow-visible md:min-w-[230px] md:justify-end md:py-10 md:pl-10 md:pr-4 lg:min-w-[290px] lg:pl-14"
               >
                 <span
                   className={cn(
                     microLabelClass,
-                    "whitespace-nowrap transition-[letter-spacing,color] duration-900 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:tracking-[0.41em] group-hover:text-foreground/72"
+                    "whitespace-nowrap transition-[letter-spacing,color] duration-900 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:tracking-[0.41em] group-hover:text-foreground/72",
                   )}
                 >
                   {t(copy.disciplines.atelierMenu.explore)}

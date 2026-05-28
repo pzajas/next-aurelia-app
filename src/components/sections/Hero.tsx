@@ -31,7 +31,7 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="relative h-screen w-full -mt-[88px] bg-[#020202] overflow-hidden"
+      className="relative h-[100svh] md:h-screen w-full mt-[-58px] md:mt-[-88px] bg-[#020202] overflow-hidden"
     >
       <div className="absolute inset-0">
         <Image
@@ -42,13 +42,13 @@ export default function Hero() {
           loading="eager"
           fetchPriority="high"
           quality={80}
-          className="object-contain object-[72%_center] grayscale contrast-[1.06] brightness-[1.02]"
+          className="object-cover md:object-contain object-[60%_center] md:object-[72%_center] grayscale contrast-[1.06] brightness-[1.02]"
           sizes="(max-width: 1200px) min(100vw, 1200px), 725px"
           onLoad={() => setImageLoaded(true)}
         />
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 z-20 px-10 md:px-10 pb-12 md:pb-20 pt-24">
+      <div className="absolute bottom-0 left-0 right-0 z-20 px-4 md:px-10 pb-12 md:pb-20 pt-24">
         <div
           style={{
             opacity: mediaReady ? 1 : 0,

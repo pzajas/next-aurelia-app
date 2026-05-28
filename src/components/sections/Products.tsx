@@ -1,9 +1,9 @@
 "use client";
 
-import Image from "next/image";
-import { motion } from "framer-motion";
-import { media } from "@/lib/media";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
+import { media } from "@/lib/media";
+import { motion } from "framer-motion";
+import Image from "next/image";
 
 export default function Products() {
   const { t, copy } = useLocale();
@@ -14,14 +14,14 @@ export default function Products() {
   ];
 
   return (
-    <section className="cinematic-section bg-layer-2">
+    <section className="cinematic-section bg-[#f8f8f8]">
       <motion.div className="cinematic-bloom" aria-hidden />
-      <div className="max-w-6xl mx-auto pt-24 md:pt-32 pb-20">
-        <div className="text-[10px] font-sans uppercase tracking-[0.4em] text-foreground/40 mb-16">
+      <div className="max-w-6xl mx-auto px-4 md:px-10 pt-24 md:pt-32 pb-20">
+        <div className="text-[10px] font-sans uppercase tracking-[0.4em] text-foreground/60 mb-16">
           {t(copy.products.label)}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 md:gap-16">
           {products.map((product, index) => (
             <motion.div
               key={t(product.name)}

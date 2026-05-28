@@ -1,14 +1,9 @@
 "use client";
 
-import {
-  motion,
-  useInView,
-  useScroll,
-  useTransform,
-} from "framer-motion";
-import { useEffect, useRef, useState } from "react";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 import { cn } from "@/lib/utils";
+import { motion, useInView, useScroll, useTransform } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
 const easeLuxury = [0.22, 1, 0.36, 1] as const;
 const STAGGER = 0.14;
@@ -61,7 +56,7 @@ function CountUp({
     const tick = (now: number) => {
       const progress = Math.min(
         (now - startTime) / (COUNTER_DURATION * 1000),
-        1
+        1,
       );
       const eased = 1 - Math.pow(1 - progress, 3);
       setValue(Math.round(eased * target));
@@ -72,11 +67,7 @@ function CountUp({
     return () => cancelAnimationFrame(frame);
   }, [running, target]);
 
-  return (
-    <span className="tabular-nums">
-      {formatCount(value, suffix)}
-    </span>
-  );
+  return <span className="tabular-nums">{formatCount(value, suffix)}</span>;
 }
 
 const alignClasses = {
@@ -87,7 +78,7 @@ const alignClasses = {
 
 const hairlineAlign = {
   start: "",
-  center: "mx-auto",
+  center: "md:mx-auto",
   end: "md:ml-auto",
 } as const;
 
@@ -106,17 +97,15 @@ export default function PrestigeMetrics() {
     <section ref={sectionRef} className="bg-background overflow-hidden">
       <motion.div
         style={{ y: parallaxY }}
-        className="max-w-5xl mx-auto px-10 py-20 border-b border-foreground/10"
+        className="max-w-5xl mx-auto px-4 py-20 md:px-10 border-b border-foreground/10"
       >
         <motion.p
           initial={{ opacity: 0, x: -14, letterSpacing: "0.28em" }}
           animate={
-            inView
-              ? { opacity: 1, x: 0, letterSpacing: "0.4em" }
-              : undefined
+            inView ? { opacity: 1, x: 0, letterSpacing: "0.4em" } : undefined
           }
           transition={{ duration: 1.1, ease: easeLuxury }}
-          className="text-[10px] font-sans uppercase text-foreground/40 mb-16"
+          className="text-[10px] font-sans uppercase text-foreground/60 mb-16"
         >
           {t(copy.prestige.label)}
         </motion.p>
@@ -152,7 +141,7 @@ export default function PrestigeMetrics() {
                   "flex flex-col items-start text-left",
                   "transition-opacity duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
                   "md:opacity-100 md:group-hover/stats:opacity-50 md:hover:!opacity-100",
-                  alignClasses[stat.align]
+                  alignClasses[stat.align],
                 )}
               >
                 <div className="font-serif text-[clamp(3.5rem,7vw,7rem)] font-light text-foreground leading-none">
@@ -166,9 +155,7 @@ export default function PrestigeMetrics() {
 
                 <motion.div
                   initial={{ width: 0, opacity: 0 }}
-                  animate={
-                    inView ? { width: 48, opacity: 1 } : undefined
-                  }
+                  animate={inView ? { width: 48, opacity: 1 } : undefined}
                   transition={{
                     duration: 1.1,
                     delay: lineDelay,
@@ -176,7 +163,7 @@ export default function PrestigeMetrics() {
                   }}
                   className={cn(
                     "h-px bg-foreground/20 my-4 shrink-0",
-                    hairlineAlign[stat.align]
+                    hairlineAlign[stat.align],
                   )}
                 />
 

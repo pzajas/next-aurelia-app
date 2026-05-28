@@ -1,29 +1,39 @@
 "use client";
 
-import Link from "next/link";
-import { motion } from "framer-motion";
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import MobileNavOverlay, {
-  MenuToggleIcon,
+    MenuToggleIcon,
 } from "@/components/MobileNavOverlay";
 import {
-  headerScrollTransition,
-  resolveHeaderHeight,
+    headerScrollTransition,
+    resolveHeaderHeight,
 } from "@/lib/header-metrics";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 import {
-  navChrome,
-  NAV_GLASS_DARK,
-  resolveNavChromeTheme,
+    NAV_GLASS_DARK,
+    navChrome,
+    resolveNavChromeTheme,
 } from "@/lib/nav-glass";
-import { NAV_EASE, getMobileNavCloseDurationSec, navTimings } from "@/lib/nav-motion";
 import {
-  isScrollLocked,
-  lockScroll,
-  releaseNavVisual,
-  unlockScroll,
+    NAV_EASE,
+    getMobileNavCloseDurationSec,
+    navTimings,
+} from "@/lib/nav-motion";
+import {
+    isScrollLocked,
+    lockScroll,
+    releaseNavVisual,
+    unlockScroll,
 } from "@/lib/scroll-lock";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import {
+    useCallback,
+    useEffect,
+    useLayoutEffect,
+    useRef,
+    useState,
+} from "react";
 
 const SCROLL_THRESHOLD = 50;
 
@@ -92,9 +102,9 @@ function NavLink({
           ? "text-white/52 hover:text-white/88 hover:tracking-[0.4em]"
           : cn(
               "opacity-90 group-hover/nav:opacity-[0.55] hover:!opacity-100 hover:tracking-[0.44em]",
-              scrolled ? "text-[#141210]" : "text-white"
+              scrolled ? "text-[#141210]" : "text-white",
             ),
-        className
+        className,
       )}
     >
       {label}
@@ -127,7 +137,7 @@ function RequestAppointmentCta({
           "hover:text-white hover:tracking-[0.4em]",
           "after:pointer-events-none after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-full after:origin-left after:scale-y-[0.35] after:bg-white/40 after:transition-transform after:duration-500 after:ease-[cubic-bezier(0.22,1,0.36,1)] after:content-['']",
           "after:scale-x-0 group-hover/cta:after:scale-x-100",
-          className
+          className,
         )}
       >
         <span className="whitespace-nowrap">{label}</span>
@@ -145,7 +155,7 @@ function RequestAppointmentCta({
       className={cn(
         "inline-flex flex-col items-center opacity-100 transition-opacity duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:opacity-80",
         scrolled ? "text-[#141210]" : "text-white",
-        className
+        className,
       )}
     >
       <span className="text-[10px] font-sans uppercase tracking-[0.38em] whitespace-nowrap">
@@ -155,7 +165,7 @@ function RequestAppointmentCta({
         <span
           className={cn(
             "block h-px w-[60%] origin-center scale-y-[0.35]",
-            scrolled ? "bg-[#141210]/40" : "bg-white/45"
+            scrolled ? "bg-[#141210]/40" : "bg-white/45",
           )}
         />
       </span>
@@ -176,14 +186,19 @@ export default function SiteHeader() {
   const savedScrollYRef = useRef(0);
   const headerColorReleasedRef = useRef(false);
   const closeFallbackRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const closeFinishFallbackRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const closeFinishFallbackRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
 
   const navRef = useRef<HTMLElement>(null);
   const linkRefs = useRef<Map<string, HTMLAnchorElement>>(new Map());
-  const registerRef = useCallback((id: string, el: HTMLAnchorElement | null) => {
-    if (el) linkRefs.current.set(id, el);
-    else linkRefs.current.delete(id);
-  }, []);
+  const registerRef = useCallback(
+    (id: string, el: HTMLAnchorElement | null) => {
+      if (el) linkRefs.current.set(id, el);
+      else linkRefs.current.delete(id);
+    },
+    [],
+  );
 
   const clearCloseTimers = useCallback(() => {
     if (closeFallbackRef.current) {
@@ -217,9 +232,12 @@ export default function SiteHeader() {
 
     const colorReleaseMs = Math.max(
       0,
-      (getMobileNavCloseDurationSec() - navTimings.headerReleaseLeadSec) * 1000
+      (getMobileNavCloseDurationSec() - navTimings.headerReleaseLeadSec) * 1000,
     );
-    closeFallbackRef.current = setTimeout(beginHeaderColorRelease, colorReleaseMs);
+    closeFallbackRef.current = setTimeout(
+      beginHeaderColorRelease,
+      colorReleaseMs,
+    );
     closeFinishFallbackRef.current = setTimeout(finishMenuClose, 600);
   }, [beginHeaderColorRelease, clearCloseTimers, finishMenuClose]);
 
@@ -231,9 +249,7 @@ export default function SiteHeader() {
     clearCloseTimers();
     headerColorReleasedRef.current = false;
     savedScrollYRef.current =
-      typeof window !== "undefined"
-        ? window.scrollY
-        : savedScrollYRef.current;
+      typeof window !== "undefined" ? window.scrollY : savedScrollYRef.current;
     setMenuHeaderDark(true);
     if (!isScrollLocked()) lockScroll();
     setMenuOpen(true);
@@ -312,16 +328,13 @@ export default function SiteHeader() {
 
         const visible = entries
           .filter((e) => e.isIntersecting)
-          .sort(
-            (a, b) =>
-              a.boundingClientRect.top - b.boundingClientRect.top
-          );
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
 
         if (visible.length > 0) {
           setActiveId(visible[0].target.id);
         }
       },
-      { rootMargin: "-28% 0px -52% 0px", threshold: 0 }
+      { rootMargin: "-28% 0px -52% 0px", threshold: 0 },
     );
 
     sections.forEach((section) => sectionObserver.observe(section));
@@ -387,7 +400,7 @@ export default function SiteHeader() {
   const pageChromeTheme = resolveNavChromeTheme(
     scrolled,
     scrollYForChrome,
-    SCROLL_THRESHOLD
+    SCROLL_THRESHOLD,
   );
   const pageChrome = navChrome[pageChromeTheme];
   const pageHeaderSurface =
@@ -430,11 +443,7 @@ export default function SiteHeader() {
     !isDesktop && scrolled && !menuHeaderDark && Boolean(pageHeaderSurface);
   const headerHeight = resolveHeaderHeight(isDesktop, scrolled);
   const logoScale = 1;
-  const underlineBottom = isDesktop
-    ? desktopHeaderVisible
-      ? 11
-      : 16
-    : 14;
+  const underlineBottom = isDesktop ? (desktopHeaderVisible ? 11 : 16) : 14;
 
   const desktopGlassStyle = {
     background: NAV_GLASS_DARK.background,
@@ -446,7 +455,7 @@ export default function SiteHeader() {
   useEffect(() => {
     document.documentElement.style.setProperty(
       "--site-header-height",
-      `${headerHeight}px`
+      `${headerHeight}px`,
     );
     return () => {
       document.documentElement.style.removeProperty("--site-header-height");
@@ -459,7 +468,7 @@ export default function SiteHeader() {
         className={cn(
           "top-0 z-[250] w-full min-w-0 isolate",
           "max-md:fixed max-md:left-0 max-md:right-0",
-          "md:sticky"
+          "md:sticky",
         )}
         style={{
           height: headerHeight,
@@ -525,7 +534,7 @@ export default function SiteHeader() {
 
         <nav
           ref={navRef}
-          className="relative z-10 grid h-full min-w-0 grid-cols-[1fr_auto] items-center gap-4 px-10 md:flex md:px-10 lg:px-10"
+          className="relative z-10 grid h-full min-w-0 grid-cols-[1fr_auto] items-center gap-4 px-4 md:flex md:px-10 lg:px-10"
           aria-label="Main navigation"
         >
           <motion.div
@@ -540,7 +549,7 @@ export default function SiteHeader() {
               className={cn(
                 "text-[10px] uppercase transition-opacity duration-[650ms] hover:opacity-65",
                 "font-sans text-[10px] tracking-[0.52em]",
-                "md:font-serif md:text-[11px] md:tracking-[0.22em] md:text-white/95"
+                "md:font-serif md:text-[11px] md:tracking-[0.22em] md:text-white/95",
               )}
               style={{
                 color: "inherit",
@@ -562,7 +571,7 @@ export default function SiteHeader() {
               "transition-[gap] duration-[800ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
               desktopHeaderVisible
                 ? "gap-5 lg:gap-6 xl:gap-7"
-                : "gap-6 lg:gap-8 xl:gap-9"
+                : "gap-6 lg:gap-8 xl:gap-9",
             )}
             variants={navRevealContainer}
             initial="hidden"
@@ -594,7 +603,7 @@ export default function SiteHeader() {
             type="button"
             className={cn(
               "relative flex h-10 w-10 items-center justify-center md:hidden",
-              "outline-none [-webkit-tap-highlight-color:transparent] focus:outline-none focus-visible:outline-none"
+              "outline-none [-webkit-tap-highlight-color:transparent] focus:outline-none focus-visible:outline-none",
             )}
             style={{ color: "inherit" }}
             aria-expanded={menuOpen}
