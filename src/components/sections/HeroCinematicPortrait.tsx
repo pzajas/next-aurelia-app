@@ -1,5 +1,6 @@
 "use client";
 
+import { HERO_IMAGE_QUALITY, HERO_MOBILE_SIZES } from "@/lib/hero-image-preload";
 import {
   HERO_BREATH,
   HERO_BREATH_SCALE,
@@ -97,7 +98,7 @@ export default function HeroCinematicPortrait({
           priority
           loading="eager"
           fetchPriority="high"
-          quality={75}
+          quality={HERO_IMAGE_QUALITY}
           className={className}
           sizes={sizes}
           onLoad={onLoad}

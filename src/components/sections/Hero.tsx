@@ -4,6 +4,7 @@ import HeroCinematicPortrait from "@/components/sections/HeroCinematicPortrait";
 import HeroMobileCopy from "@/components/sections/HeroMobileCopy";
 import { useIntroReveal } from "@/lib/intro/IntroRevealContext";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
+import { HERO_MOBILE_SIZES } from "@/lib/hero-image-preload";
 import { media } from "@/lib/media";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -35,7 +36,7 @@ export default function Hero() {
           reveal={reveal}
           onLoad={() => setImageLoaded(true)}
           className="object-cover object-[60%_center] grayscale contrast-[1.06] brightness-[1.02]"
-          sizes="(max-width: 768px) 100vw, 725px"
+          sizes={HERO_MOBILE_SIZES}
         />
       </div>
 
@@ -49,7 +50,7 @@ export default function Hero() {
           fetchPriority="high"
           quality={75}
           className="object-contain object-[72%_center] grayscale contrast-[1.06] brightness-[1.02]"
-          sizes="(max-width: 768px) 100vw, 725px"
+          sizes={HERO_MOBILE_SIZES}
           onLoad={() => setImageLoaded(true)}
         />
       </div>

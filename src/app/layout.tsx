@@ -3,8 +3,8 @@ import { Cormorant_Garamond, DM_Sans } from "next/font/google";
 import dynamic from "next/dynamic";
 import Script from "next/script";
 import AppChrome from "@/components/AppChrome";
+import HeroPreloadLinks from "@/components/HeroPreloadLinks";
 import SessionIntro from "@/components/SessionIntro";
-import { media } from "@/lib/media";
 
 const CinematicCursor = dynamic(() => import("@/components/CinematicCursor"));
 const CookieConsent = dynamic(() => import("@/components/CookieConsent"));
@@ -54,12 +54,7 @@ export default function RootLayout({
       className={`${dmSans.variable} ${cormorant.variable} h-full antialiased`}
     >
       <head>
-        <link
-          rel="preload"
-          href={media.hero.src}
-          as="image"
-          type="image/avif"
-        />
+        <HeroPreloadLinks />
       </head>
       <body className="min-h-full overflow-x-clip" suppressHydrationWarning>
         <Script id="aurelia-session-intro" strategy="beforeInteractive">

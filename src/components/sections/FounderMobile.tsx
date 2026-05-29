@@ -25,6 +25,7 @@ import {
 const easeLuxury = [0.22, 1, 0.36, 1] as const;
 const ROTATE_MS = 9000;
 const SWIPE_THRESHOLD = 52;
+const SWITCH_MS = 520;
 
 const teamNames = [
   {
@@ -57,7 +58,8 @@ const teamNames = [
   },
 ] as const;
 
-const textItem = {
+/** First section entrance */
+const revealTextItem = {
   hidden: { opacity: 0, y: 14, filter: "blur(6px)" },
   visible: (i: number) => ({
     opacity: 1,
@@ -73,7 +75,26 @@ const textItem = {
     opacity: 0,
     y: -6,
     filter: "blur(4px)",
-    transition: { duration: 0.45, ease: easeLuxury },
+    transition: { duration: 0.32, ease: easeLuxury },
+  },
+};
+
+/** Member switch — short crossfade, no full reset */
+const switchTextItem = {
+  hidden: { opacity: 0, y: 10 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.42,
+      delay: i * 0.05,
+      ease: easeLuxury,
+    },
+  }),
+  exit: {
+    opacity: 0,
+    y: -8,
+    transition: { duration: 0.3, ease: easeLuxury },
   },
 };
 
@@ -81,6 +102,42 @@ type FounderMobileProps = {
   paused: boolean;
   onPauseChange: (paused: boolean) => void;
 };
+
+function FounderMobileIndicators({
+  active,
+  onSelect,
+  viewMemberLabel,
+}: {
+  active: number;
+  onSelect: (index: number) => void;
+  viewMemberLabel: string;
+}) {
+  return (
+    <div className="mt-6 flex items-center gap-3 pointer-events-auto">
+      {teamNames.map((person, index) => {
+        const isActive = index === active;
+        return (
+          <button
+            key={person.id}
+            type="button"
+            onClick={() => onSelect(index)}
+            aria-label={`${viewMemberLabel} ${person.name}`}
+            aria-current={isActive ? "true" : undefined}
+            className="relative flex h-6 cursor-pointer items-center"
+            style={{ width: isActive ? 44 : 16 }}
+          >
+            <span
+              className={cn(
+                "block h-px w-full transition-[width,background-color] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                isActive ? "bg-foreground/58" : "bg-foreground/20"
+              )}
+            />
+          </button>
+        );
+      })}
+    </div>
+  );
+}
 
 export default function FounderMobile({
   paused,
@@ -91,6 +148,7 @@ export default function FounderMobile({
   const inView = useInView(sectionRef, { once: true, margin: "-8% 0px" });
   const [active, setActive] = useState(0);
   const [entered, setEntered] = useState(false);
+  const [introPlayed, setIntroPlayed] = useState(false);
   const [transitioning, setTransitioning] = useState(false);
   const [dragX, setDragX] = useState(0);
   const touchStartXRef = useRef<number | null>(null);
@@ -113,6 +171,7 @@ export default function FounderMobile({
   const member = team[active];
   const nextIndex = (active + 1) % team.length;
   const nextMember = team[nextIndex];
+  const textVariants = introPlayed ? switchTextItem : revealTextItem;
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -130,15 +189,32 @@ export default function FounderMobile({
     if (inView) setEntered(true);
   }, [inView]);
 
+  useEffect(() => {
+    if (entered) setIntroPlayed(true);
+  }, [entered]);
+
+  const preloadAdjacent = useCallback(
+    (index: number) => {
+      const prev = team[(index - 1 + team.length) % team.length];
+      const next = team[(index + 1) % team.length];
+      [prev.image, next.image].forEach((src) => {
+        const img = new window.Image();
+        img.src = src;
+      });
+    },
+    [team]
+  );
+
   const goTo = useCallback(
     (index: number) => {
       const next = (index + team.length) % team.length;
       if (next === active) return;
       setTransitioning(true);
       setActive(next);
-      window.setTimeout(() => setTransitioning(false), 900);
+      preloadAdjacent(next);
+      window.setTimeout(() => setTransitioning(false), SWITCH_MS);
     },
-    [active, team.length]
+    [active, preloadAdjacent, team.length]
   );
 
   const next = useCallback(() => {
@@ -168,9 +244,8 @@ export default function FounderMobile({
 
   useEffect(() => {
     if (!entered) return;
-    const img = new window.Image();
-    img.src = team[nextIndex].image;
-  }, [active, entered, nextIndex, team]);
+    preloadAdjacent(active);
+  }, [active, entered, preloadAdjacent]);
 
   useEffect(() => {
     if (paused || !entered) return;
@@ -275,77 +350,57 @@ export default function FounderMobile({
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[5] h-[52%] bg-gradient-to-t from-[#f8f8f8] via-[#f8f8f8]/92 to-transparent" />
 
       <div className="absolute inset-x-0 bottom-0 z-20 px-7 pb-[max(3.25rem,env(safe-area-inset-bottom))] pt-10">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={member.id}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            className="flex flex-col"
-          >
-            <motion.p
-              custom={0}
-              variants={textItem}
-              className="text-[9px] font-sans uppercase tracking-[0.42em] text-foreground/58"
-            >
-              {member.label}
-            </motion.p>
-
+        <div className="relative min-h-[11.5rem]">
+          <AnimatePresence mode="sync" initial={false}>
             <motion.div
-              custom={1}
-              variants={textItem}
-              className="mt-3 h-px w-12 origin-left bg-foreground/26"
-            />
-
-            <motion.h2
-              custom={2}
-              variants={textItem}
-              className="mt-4 font-serif text-[clamp(2.45rem,12.8vw,3.65rem)] font-light leading-[0.88] tracking-[-0.015em] text-foreground"
+              key={member.id}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className="flex flex-col"
             >
-              {member.name.split(" ").map((part) => (
-                <span key={part} className="block">
-                  {part}
-                </span>
-              ))}
-            </motion.h2>
+              <motion.p
+                custom={0}
+                variants={textVariants}
+                className="text-[9px] font-sans uppercase tracking-[0.42em] text-foreground/58"
+              >
+                {member.label}
+              </motion.p>
 
-            <motion.p
-              custom={3}
-              variants={textItem}
-              className="mt-3 font-serif text-[1.05rem] font-light text-foreground/72"
-            >
-              {member.role}
-            </motion.p>
+              <motion.div
+                custom={1}
+                variants={textVariants}
+                className="mt-3 h-px w-12 origin-left bg-foreground/26"
+              />
 
-            <motion.div
-              custom={4}
-              variants={textItem}
-              className="mt-6 flex items-center gap-3"
-            >
-              {teamNames.map((person, index) => {
-                const isActive = index === active;
-                return (
-                  <button
-                    key={person.id}
-                    type="button"
-                    onClick={() => goTo(index)}
-                    aria-label={`${t(copy.founder.viewMember)} ${person.name}`}
-                    aria-current={isActive ? "true" : undefined}
-                    className="relative flex h-6 cursor-pointer items-center"
-                    style={{ width: isActive ? 44 : 16 }}
-                  >
-                    <span
-                      className={cn(
-                        "block h-px w-full transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]",
-                        isActive ? "bg-foreground/58" : "bg-foreground/20"
-                      )}
-                    />
-                  </button>
-                );
-              })}
+              <motion.h2
+                custom={2}
+                variants={textVariants}
+                className="mt-4 font-serif text-[clamp(2.45rem,12.8vw,3.65rem)] font-light leading-[0.88] tracking-[-0.015em] text-foreground"
+              >
+                {member.name.split(" ").map((part) => (
+                  <span key={part} className="block">
+                    {part}
+                  </span>
+                ))}
+              </motion.h2>
+
+              <motion.p
+                custom={3}
+                variants={textVariants}
+                className="mt-3 font-serif text-[1.05rem] font-light text-foreground/72"
+              >
+                {member.role}
+              </motion.p>
             </motion.div>
-          </motion.div>
-        </AnimatePresence>
+          </AnimatePresence>
+        </div>
+
+        <FounderMobileIndicators
+          active={active}
+          onSelect={goTo}
+          viewMemberLabel={t(copy.founder.viewMember)}
+        />
       </div>
     </section>
   );

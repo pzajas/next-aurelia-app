@@ -15,8 +15,8 @@ export const HERO_IMAGE_SCALE_FROM = 1.028;
 
 /** LCP-friendly: opacity stays 1 — only filter/scale animate */
 export const HERO_IMAGE_ENTRANCE = {
-  filter: { duration: 2.35, ease: EASE_CINEMATIC },
-  scale: { duration: 3.2, ease: [0.14, 0.92, 0.2, 1] as const },
+  filter: { duration: 2.2, ease: EASE_CINEMATIC },
+  scale: { duration: 2.75, ease: [0.14, 0.92, 0.2, 1] as const },
 } as const;
 
 export const HERO_IMAGE_HOLD = {

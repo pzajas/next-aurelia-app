@@ -297,7 +297,7 @@ export default function Founder() {
     if (nextIndex === active) return;
     setTransitioning(true);
     setActive(nextIndex);
-    window.setTimeout(() => setTransitioning(false), 900);
+    window.setTimeout(() => setTransitioning(false), 520);
   }, [active]);
 
   const next = useCallback(() => {
@@ -354,7 +354,7 @@ export default function Founder() {
           className="max-w-lg"
         >
           <div className="relative h-[400px] sm:h-[440px] md:h-[480px] w-full shrink-0 overflow-hidden">
-            <AnimatePresence initial={false}>
+            <AnimatePresence mode="sync" initial={false}>
               <TeamMemberContent
                 key={member.id}
                 member={member}

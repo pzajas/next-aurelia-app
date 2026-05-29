@@ -8,8 +8,10 @@ import { useIntroReveal } from "@/lib/intro/IntroRevealContext";
 
 const STORAGE_KEY = "aurelia:intro-seen";
 const EASE = [0.22, 1, 0.36, 1] as const;
-const INTRO_MS = 2600;
-const EXIT_MS = 650;
+const INTRO_MS = 2400;
+const EXIT_MS = 500;
+/** Start hero settle slightly before intro slides away (LCP can paint sooner). */
+const REVEAL_LEAD_MS = 320;
 
 const BRAND = "AURELIA";
 
@@ -111,7 +113,10 @@ export default function SessionIntro() {
       revealHero();
     };
 
-    const exitTimer = window.setTimeout(beginExit, INTRO_MS - EXIT_MS);
+    const exitAt = INTRO_MS - EXIT_MS;
+    const revealAt = Math.max(0, exitAt - REVEAL_LEAD_MS);
+    const revealTimer = window.setTimeout(() => revealHero(), revealAt);
+    const exitTimer = window.setTimeout(beginExit, exitAt);
     const fallbackTimer = window.setTimeout(finishIntro, INTRO_MS + 400);
 
     const started = performance.now();
@@ -128,6 +133,7 @@ export default function SessionIntro() {
     frame = requestAnimationFrame(tick);
 
     return () => {
+      window.clearTimeout(revealTimer);
       window.clearTimeout(exitTimer);
       window.clearTimeout(fallbackTimer);
       cancelAnimationFrame(frame);
@@ -145,9 +151,13 @@ export default function SessionIntro() {
         role="status"
         aria-live="polite"
         aria-label={t(copy.intro.sequence)}
-        initial={{ y: 0 }}
-        animate={exiting ? { y: "-100%" } : { y: 0 }}
-        transition={{ duration: EXIT_MS / 1000, ease: EASE }}
+        initial={{ y: 0, opacity: 1 }}
+        animate={exiting ? { y: "-100%", opacity: 0 } : { y: 0, opacity: 1 }}
+        transition={{
+          duration: EXIT_MS / 1000,
+          ease: EASE,
+          opacity: { duration: 0.38, ease: EASE },
+        }}
         onAnimationComplete={() => {
           if (exitingRef.current) finishRef.current();
         }}

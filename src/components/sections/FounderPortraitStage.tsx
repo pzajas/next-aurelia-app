@@ -89,6 +89,13 @@ export default function FounderPortraitStage({
             <motion.div
               key={activeKey}
               className="absolute inset-0"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{
+                duration: reducedMotion ? 0.2 : 0.5,
+                ease: easeLuxury,
+              }}
             >
               <Image
                 src={imageSrc}
