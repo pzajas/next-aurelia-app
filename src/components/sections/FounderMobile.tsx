@@ -14,7 +14,6 @@ import {
 import FounderPortraitStage, {
   useFounderPortraitMotion,
 } from "@/components/sections/FounderPortraitStage";
-import Image from "next/image";
 import {
   useCallback,
   useEffect,
@@ -25,7 +24,9 @@ import {
 const easeLuxury = [0.22, 1, 0.36, 1] as const;
 const ROTATE_MS = 9000;
 const SWIPE_THRESHOLD = 52;
-const SWITCH_MS = 520;
+const SWITCH_MS = 560;
+/** Single opacity crossfade — no blur/stagger (smoother on mobile). */
+const TEXT_CROSSFADE_S = 0.48;
 
 const teamNames = [
   {
@@ -57,46 +58,6 @@ const teamNames = [
     mobileTranslateY: "9%",
   },
 ] as const;
-
-/** First section entrance */
-const revealTextItem = {
-  hidden: { opacity: 0, y: 14, filter: "blur(6px)" },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    filter: "blur(0px)",
-    transition: {
-      duration: 1.05,
-      delay: 0.18 + i * 0.11,
-      ease: easeLuxury,
-    },
-  }),
-  exit: {
-    opacity: 0,
-    y: -6,
-    filter: "blur(4px)",
-    transition: { duration: 0.32, ease: easeLuxury },
-  },
-};
-
-/** Member switch — short crossfade, no full reset */
-const switchTextItem = {
-  hidden: { opacity: 0, y: 10 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.42,
-      delay: i * 0.05,
-      ease: easeLuxury,
-    },
-  }),
-  exit: {
-    opacity: 0,
-    y: -8,
-    transition: { duration: 0.3, ease: easeLuxury },
-  },
-};
 
 type FounderMobileProps = {
   paused: boolean;
@@ -139,6 +100,35 @@ function FounderMobileIndicators({
   );
 }
 
+function MemberCopy({
+  label,
+  name,
+  role,
+}: {
+  label: string;
+  name: string;
+  role: string;
+}) {
+  return (
+    <>
+      <p className="text-[9px] font-sans uppercase tracking-[0.42em] text-foreground/58">
+        {label}
+      </p>
+      <div className="mt-3 h-px w-12 bg-foreground/26" />
+      <h2 className="mt-4 font-serif text-[clamp(2.45rem,12.8vw,3.65rem)] font-light leading-[0.88] tracking-[-0.015em] text-foreground">
+        {name.split(" ").map((part) => (
+          <span key={part} className="block">
+            {part}
+          </span>
+        ))}
+      </h2>
+      <p className="mt-3 font-serif text-[1.05rem] font-light text-foreground/72">
+        {role}
+      </p>
+    </>
+  );
+}
+
 export default function FounderMobile({
   paused,
   onPauseChange,
@@ -148,12 +138,12 @@ export default function FounderMobile({
   const inView = useInView(sectionRef, { once: true, margin: "-8% 0px" });
   const [active, setActive] = useState(0);
   const [entered, setEntered] = useState(false);
-  const [introPlayed, setIntroPlayed] = useState(false);
   const [transitioning, setTransitioning] = useState(false);
-  const [dragX, setDragX] = useState(0);
   const touchStartXRef = useRef<number | null>(null);
   const touchStartYRef = useRef<number | null>(null);
   const dragHandledRef = useRef(false);
+  const transitionTimerRef = useRef<number | null>(null);
+  const swappingRef = useRef(false);
 
   const team = teamNames.map((person, index) => {
     const entry = copy.founder.team[index];
@@ -169,9 +159,6 @@ export default function FounderMobile({
   });
 
   const member = team[active];
-  const nextIndex = (active + 1) % team.length;
-  const nextMember = team[nextIndex];
-  const textVariants = introPlayed ? switchTextItem : revealTextItem;
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -189,10 +176,6 @@ export default function FounderMobile({
     if (inView) setEntered(true);
   }, [inView]);
 
-  useEffect(() => {
-    if (entered) setIntroPlayed(true);
-  }, [entered]);
-
   const preloadAdjacent = useCallback(
     (index: number) => {
       const prev = team[(index - 1 + team.length) % team.length];
@@ -208,11 +191,22 @@ export default function FounderMobile({
   const goTo = useCallback(
     (index: number) => {
       const next = (index + team.length) % team.length;
-      if (next === active) return;
+      if (next === active || swappingRef.current) return;
+
+      swappingRef.current = true;
+      if (transitionTimerRef.current) {
+        window.clearTimeout(transitionTimerRef.current);
+      }
+
       setTransitioning(true);
       setActive(next);
       preloadAdjacent(next);
-      window.setTimeout(() => setTransitioning(false), SWITCH_MS);
+
+      transitionTimerRef.current = window.setTimeout(() => {
+        setTransitioning(false);
+        swappingRef.current = false;
+        transitionTimerRef.current = null;
+      }, SWITCH_MS);
     },
     [active, preloadAdjacent, team.length]
   );
@@ -224,7 +218,6 @@ export default function FounderMobile({
   const handleDragEnd = useCallback(
     (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
       onPauseChange(false);
-      setDragX(0);
       const { offset, velocity } = info;
 
       if (offset.x <= -SWIPE_THRESHOLD || velocity.x <= -500) {
@@ -238,10 +231,6 @@ export default function FounderMobile({
     [active, goTo, onPauseChange]
   );
 
-  const dragOffset = Math.min(0, dragX * 0.22);
-  const isDragging = Math.abs(dragX) > 14;
-  const peekReveal = Math.min(1, Math.abs(dragX) / 100);
-
   useEffect(() => {
     if (!entered) return;
     preloadAdjacent(active);
@@ -252,6 +241,14 @@ export default function FounderMobile({
     const timer = window.setInterval(next, ROTATE_MS);
     return () => window.clearInterval(timer);
   }, [paused, entered, next]);
+
+  useEffect(() => {
+    return () => {
+      if (transitionTimerRef.current) {
+        window.clearTimeout(transitionTimerRef.current);
+      }
+    };
+  }, []);
 
   return (
     <section
@@ -285,14 +282,11 @@ export default function FounderMobile({
         style={{ touchAction: "pan-y" }}
         drag="x"
         dragConstraints={{ left: 0, right: 0 }}
-        dragElastic={0.08}
+        dragElastic={0.06}
         dragMomentum={false}
         onDragStart={() => {
           dragHandledRef.current = true;
           onPauseChange(true);
-        }}
-        onDrag={(_, info) => {
-          setDragX(info.offset.x);
         }}
         onDragEnd={handleDragEnd}
       >
@@ -308,93 +302,39 @@ export default function FounderMobile({
           loading={active === 0 ? "eager" : "lazy"}
           sizes="(max-width: 768px) 120vw, 100vw"
           quality={82}
-          imageOffsetX={dragOffset}
           objectPosition={member.mobileObjectPosition}
           imageStyle={{
             transform: `translateY(${member.mobileTranslateY}) scale(1.16)`,
           }}
-        >
-          <AnimatePresence>
-            {isDragging && (
-              <motion.div
-                key="peek"
-                className="pointer-events-none absolute inset-y-0 right-0 z-[1] w-[28%] overflow-hidden"
-                initial={{ opacity: 0 }}
-                animate={{
-                  opacity: 0.35 + peekReveal * 0.5,
-                  x: Math.max(0, -dragX * 0.06),
-                }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.5, ease: easeLuxury }}
-              >
-                <div className="absolute inset-0 z-10 bg-gradient-to-l from-[#f8f8f8] via-[#f8f8f8]/75 to-transparent" />
-                <Image
-                  src={nextMember.image}
-                  alt=""
-                  fill
-                  loading="lazy"
-                  className="object-cover grayscale"
-                  style={{
-                    objectPosition: nextMember.mobileObjectPosition,
-                    transform: `translateY(${nextMember.mobileTranslateY}) scale(1.12)`,
-                  }}
-                  sizes="48vw"
-                  quality={78}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </FounderPortraitStage>
+        />
       </motion.div>
 
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[5] h-[52%] bg-gradient-to-t from-[#f8f8f8] via-[#f8f8f8]/92 to-transparent" />
 
       <div className="absolute inset-x-0 bottom-0 z-20 px-7 pb-[max(3.25rem,env(safe-area-inset-bottom))] pt-10">
-        <div className="relative min-h-[11.5rem]">
+        <motion.div
+          className="relative h-[12.75rem]"
+          initial={{ opacity: 0 }}
+          animate={entered ? { opacity: 1 } : { opacity: 0 }}
+          transition={{ duration: 0.9, ease: easeLuxury }}
+        >
           <AnimatePresence mode="sync" initial={false}>
             <motion.div
               key={member.id}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              className="flex flex-col"
+              className="absolute inset-x-0 top-0 flex flex-col will-change-[opacity]"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: TEXT_CROSSFADE_S, ease: easeLuxury }}
             >
-              <motion.p
-                custom={0}
-                variants={textVariants}
-                className="text-[9px] font-sans uppercase tracking-[0.42em] text-foreground/58"
-              >
-                {member.label}
-              </motion.p>
-
-              <motion.div
-                custom={1}
-                variants={textVariants}
-                className="mt-3 h-px w-12 origin-left bg-foreground/26"
+              <MemberCopy
+                label={member.label}
+                name={member.name}
+                role={member.role}
               />
-
-              <motion.h2
-                custom={2}
-                variants={textVariants}
-                className="mt-4 font-serif text-[clamp(2.45rem,12.8vw,3.65rem)] font-light leading-[0.88] tracking-[-0.015em] text-foreground"
-              >
-                {member.name.split(" ").map((part) => (
-                  <span key={part} className="block">
-                    {part}
-                  </span>
-                ))}
-              </motion.h2>
-
-              <motion.p
-                custom={3}
-                variants={textVariants}
-                className="mt-3 font-serif text-[1.05rem] font-light text-foreground/72"
-              >
-                {member.role}
-              </motion.p>
             </motion.div>
           </AnimatePresence>
-        </div>
+        </motion.div>
 
         <FounderMobileIndicators
           active={active}
