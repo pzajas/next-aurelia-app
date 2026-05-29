@@ -21,6 +21,8 @@ type HeroCinematicPortraitProps = {
   src: string;
   alt: string;
   visible: boolean;
+  /** Keep image hidden until intro-scheduled entrance (avoids hold-state flash) */
+  deferEntrance?: boolean;
   reveal: boolean;
   onLoad?: () => void;
   className?: string;
@@ -31,6 +33,7 @@ export default function HeroCinematicPortrait({
   src,
   alt,
   visible,
+  deferEntrance = false,
   reveal,
   onLoad,
   className,
@@ -59,7 +62,8 @@ export default function HeroCinematicPortrait({
         filter: HERO_FILTER_REST,
       };
 
-  const motionState = !visible ? hidden : reveal ? shown : hold;
+  const motionState =
+    !visible || deferEntrance ? hidden : reveal ? shown : hold;
 
   return (
     <motion.div

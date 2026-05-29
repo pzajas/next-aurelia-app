@@ -15,9 +15,9 @@ export const HERO_IMAGE_SCALE_FROM = 1.028;
 
 /** Scale lingers; opacity/filter resolve first */
 export const HERO_IMAGE_ENTRANCE = {
-  opacity: { duration: 2.15, ease: EASE_CINEMATIC },
-  filter: { duration: 2.35, ease: EASE_CINEMATIC },
-  scale: { duration: 3.2, ease: [0.14, 0.92, 0.2, 1] as const },
+  opacity: { duration: 1.75, ease: EASE_CINEMATIC },
+  filter: { duration: 1.9, ease: EASE_CINEMATIC },
+  scale: { duration: 2.55, ease: [0.14, 0.92, 0.2, 1] as const },
 } as const;
 
 export const HERO_IMAGE_HOLD = {
@@ -28,14 +28,14 @@ export const HERO_IMAGE_HOLD = {
 
 /** Top-to-bottom on screen (edition → logo → tagline → subtitle) */
 export const HERO_TEXT_DELAYS = {
-  microEdition: 0.2,
-  logo: 0.36,
-  title: 0.52,
-  microSubtitle: 0.68,
+  microEdition: 0.15,
+  logo: 0.28,
+  title: 0.4,
+  microSubtitle: 0.52,
 } as const;
 
 export const HERO_TEXT_ENTRANCE = {
-  duration: 1.05,
+  duration: 0.85,
   ease: EASE_CINEMATIC,
 } as const;
 

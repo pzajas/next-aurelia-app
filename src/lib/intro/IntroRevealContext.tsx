@@ -1,6 +1,10 @@
 "use client";
 
 import {
+  HERO_COPY_AFTER_IMAGE_MS,
+  HERO_IMAGE_AFTER_INTRO_MS,
+} from "@/lib/intro/timing";
+import {
   createContext,
   useCallback,
   useContext,
@@ -11,21 +15,32 @@ import {
   type ReactNode,
 } from "react";
 
-export const HERO_POST_INTRO_DELAY_MS = 0;
-
-type RevealHeroOptions = {
+type RevealOptions = {
   immediate?: boolean;
+  /** Skip post-intro delay — handoff from intro peek layer */
+  afterIntroComplete?: boolean;
 };
 
 type IntroRevealContextValue = {
-  deferHeroEntrance: boolean;
+  deferHeroImage: boolean;
+  deferHeroCopy: boolean;
+  heroIntroPeek: boolean;
   entranceFromIntro: boolean;
-  revealHero: (options?: RevealHeroOptions) => void;
+  peekHeroUnderIntro: () => void;
+  revealHeroImage: (options?: RevealOptions) => void;
+  revealHeroCopy: (options?: RevealOptions) => void;
+  /** @deprecated use revealHeroImage + revealHeroCopy */
+  revealHero: (options?: RevealOptions) => void;
 };
 
 const IntroRevealContext = createContext<IntroRevealContextValue>({
-  deferHeroEntrance: false,
+  deferHeroImage: false,
+  deferHeroCopy: false,
+  heroIntroPeek: false,
   entranceFromIntro: false,
+  peekHeroUnderIntro: () => {},
+  revealHeroImage: () => {},
+  revealHeroCopy: () => {},
   revealHero: () => {},
 });
 
@@ -34,38 +49,116 @@ export function useIntroReveal() {
 }
 
 export function IntroRevealProvider({ children }: { children: ReactNode }) {
-  const [deferHeroEntrance, setDeferHeroEntrance] = useState(false);
+  const [deferHeroImage, setDeferHeroImage] = useState(false);
+  const [deferHeroCopy, setDeferHeroCopy] = useState(false);
+  const [heroIntroPeek, setHeroIntroPeek] = useState(false);
   const [entranceFromIntro, setEntranceFromIntro] = useState(false);
-  const revealTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const imageTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (document.documentElement.dataset.intro === "1") {
-      setDeferHeroEntrance(true);
+      setDeferHeroImage(true);
+      setDeferHeroCopy(true);
       setEntranceFromIntro(true);
     }
     return () => {
-      if (revealTimeoutRef.current) clearTimeout(revealTimeoutRef.current);
+      if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+      if (imageTimerRef.current) clearTimeout(imageTimerRef.current);
     };
   }, []);
 
-  const revealHero = useCallback((options?: RevealHeroOptions) => {
-    if (revealTimeoutRef.current) clearTimeout(revealTimeoutRef.current);
-
-    const delay = options?.immediate ? 0 : HERO_POST_INTRO_DELAY_MS;
-    if (delay === 0) {
-      setDeferHeroEntrance(false);
-      return;
-    }
-
-    revealTimeoutRef.current = setTimeout(() => {
-      setDeferHeroEntrance(false);
-      revealTimeoutRef.current = null;
-    }, delay);
+  const peekHeroUnderIntro = useCallback(() => {
+    setHeroIntroPeek(true);
   }, []);
 
+  const revealHeroCopy = useCallback((options?: RevealOptions) => {
+    if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+    if (options?.immediate) {
+      setDeferHeroCopy(false);
+      return;
+    }
+    setDeferHeroCopy(false);
+  }, []);
+
+  const startHeroCopyTimer = useCallback(() => {
+    if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+    copyTimerRef.current = setTimeout(() => {
+      setDeferHeroCopy(false);
+      copyTimerRef.current = null;
+    }, HERO_COPY_AFTER_IMAGE_MS);
+  }, []);
+
+  const revealHeroImage = useCallback(
+    (options?: RevealOptions) => {
+      if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+      if (imageTimerRef.current) clearTimeout(imageTimerRef.current);
+
+      if (options?.immediate) {
+        setHeroIntroPeek(false);
+        setDeferHeroImage(false);
+        setDeferHeroCopy(false);
+        return;
+      }
+
+      if (options?.afterIntroComplete) {
+        requestAnimationFrame(() => {
+          setHeroIntroPeek(false);
+          setDeferHeroImage(false);
+          startHeroCopyTimer();
+        });
+        return;
+      }
+
+      const runImageReveal = () => {
+        requestAnimationFrame(() => {
+          setHeroIntroPeek(false);
+          setDeferHeroImage(false);
+          startHeroCopyTimer();
+        });
+      };
+
+      if (HERO_IMAGE_AFTER_INTRO_MS <= 0) {
+        runImageReveal();
+        return;
+      }
+
+      imageTimerRef.current = setTimeout(() => {
+        imageTimerRef.current = null;
+        runImageReveal();
+      }, HERO_IMAGE_AFTER_INTRO_MS);
+    },
+    [startHeroCopyTimer]
+  );
+
+  const revealHero = useCallback(
+    (options?: RevealOptions) => {
+      revealHeroImage(options);
+    },
+    [revealHeroImage]
+  );
+
   const value = useMemo(
-    () => ({ deferHeroEntrance, entranceFromIntro, revealHero }),
-    [deferHeroEntrance, entranceFromIntro, revealHero]
+    () => ({
+      deferHeroImage,
+      deferHeroCopy,
+      heroIntroPeek,
+      entranceFromIntro,
+      peekHeroUnderIntro,
+      revealHeroImage,
+      revealHeroCopy,
+      revealHero,
+    }),
+    [
+      deferHeroImage,
+      deferHeroCopy,
+      heroIntroPeek,
+      entranceFromIntro,
+      peekHeroUnderIntro,
+      revealHeroImage,
+      revealHeroCopy,
+      revealHero,
+    ]
   );
 
   return (

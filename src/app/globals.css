@@ -245,6 +245,15 @@
     z-index: 1;
   }
 
+  html[data-intro="1"] .site-shell {
+    visibility: hidden;
+  }
+
+  html[data-intro-reveal="1"] .intro-stage {
+    background-color: var(--site-gutter-color);
+    background-image: var(--site-gutter-surface);
+  }
+
   html[data-scroll-locked] {
     scroll-behavior: auto;
     overscroll-behavior: none;
@@ -593,4 +602,80 @@ body::after {
     font-size: 8px;
     line-height: 0.95rem;
   }
+}
+
+/* Editorial intro exit — pinch → line → roll-up */
+.intro-stage {
+  pointer-events: none;
+  background-color: var(--site-gutter-color, #0c0c0c);
+}
+
+.intro-stage--revealing {
+  background-color: var(--site-gutter-color, #131313);
+  background-image: var(--site-gutter-surface);
+}
+
+.intro-hero-peek {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  opacity: 0;
+  background-color: transparent;
+  pointer-events: none;
+}
+
+.intro-stage--revealing .intro-hero-peek {
+  opacity: 1;
+}
+
+.intro-hero-peek-inner {
+  position: relative;
+  height: 100%;
+  width: min(100%, var(--site-max-width, 1200px));
+  max-width: var(--site-max-width, 1200px);
+  margin-inline: auto;
+  overflow: hidden;
+  isolation: isolate;
+  contain: paint;
+  background-color: #020202;
+}
+
+.intro-hero-peek-media {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.intro-hero-peek-image {
+  filter: blur(14px) brightness(0.92);
+  transform: scale(1.02);
+  transform-origin: center center;
+  will-change: transform, filter;
+}
+
+.intro-curtain {
+  position: relative;
+  z-index: 10;
+  will-change: width, max-width, transform;
+}
+
+.intro-curtain-inner {
+  isolation: isolate;
+}
+
+.intro-reveal-line {
+  transform: scaleY(0);
+  transform-origin: top center;
+  will-change: transform;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.15) 8%,
+    rgba(255, 255, 255, 0.38) 50%,
+    rgba(255, 255, 255, 0.15) 92%,
+    transparent 100%
+  );
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.12);
 }
