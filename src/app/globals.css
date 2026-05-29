@@ -245,10 +245,6 @@
     z-index: 1;
   }
 
-  html[data-intro="1"] .site-shell {
-    visibility: hidden;
-  }
-
   html[data-scroll-locked] {
     scroll-behavior: auto;
     overscroll-behavior: none;

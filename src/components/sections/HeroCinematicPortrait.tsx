@@ -6,6 +6,7 @@ import {
   HERO_FILTER_REST,
   HERO_FILTER_SETTLE_IN,
   HERO_IMAGE_ENTRANCE,
+  HERO_IMAGE_HOLD,
   HERO_IMAGE_SCALE_FROM,
   HERO_TAP,
   HERO_TONAL,
@@ -18,6 +19,7 @@ import { useState } from "react";
 type HeroCinematicPortraitProps = {
   src: string;
   alt: string;
+  visible: boolean;
   reveal: boolean;
   onLoad?: () => void;
   className?: string;
@@ -27,42 +29,45 @@ type HeroCinematicPortraitProps = {
 export default function HeroCinematicPortrait({
   src,
   alt,
+  visible,
   reveal,
   onLoad,
   className,
-  sizes = "(max-width: 1200px) 100vw, 1200px",
+  sizes = "(max-width: 768px) 100vw, 1200px",
 }: HeroCinematicPortraitProps) {
   const reduced = Boolean(useReducedMotion());
   const [ambient, setAmbient] = useState(false);
 
-  const hidden = reduced
-    ? { opacity: 0 }
-    : {
-        opacity: 0,
-        scale: HERO_IMAGE_SCALE_FROM,
-        filter: HERO_FILTER_SETTLE_IN,
-      };
-
+  const hidden = { opacity: 0, scale: 1, filter: HERO_FILTER_REST };
+  const hold = reduced
+    ? { opacity: 1, scale: 1, filter: HERO_FILTER_REST }
+    : HERO_IMAGE_HOLD;
   const shown = reduced
-    ? { opacity: 1 }
+    ? { opacity: 1, scale: 1, filter: HERO_FILTER_REST }
     : {
         opacity: 1,
         scale: 1,
         filter: HERO_FILTER_REST,
       };
 
+  const motionState = !visible ? hidden : reveal ? shown : hold;
+
   return (
     <motion.div
-      className="absolute inset-0 touch-manipulation will-change-[transform,filter,opacity]"
-      initial={hidden}
-      animate={reveal ? shown : hidden}
+      className="absolute inset-0 touch-manipulation will-change-[transform,filter]"
+      initial={false}
+      animate={motionState}
       transition={
-        reduced ? { duration: 0.25 } : HERO_IMAGE_ENTRANCE
+        reduced
+          ? { duration: 0.25 }
+          : reveal
+            ? HERO_IMAGE_ENTRANCE
+            : { duration: 0 }
       }
       onAnimationComplete={() => {
-        if (reveal && !reduced) setAmbient(true);
+        if (reveal && visible && !reduced) setAmbient(true);
       }}
-      whileTap={reduced || !reveal ? undefined : HERO_TAP}
+      whileTap={reduced || !visible ? undefined : HERO_TAP}
       style={{ transformOrigin: "center 42%" }}
     >
       <motion.div
@@ -92,7 +97,7 @@ export default function HeroCinematicPortrait({
           priority
           loading="eager"
           fetchPriority="high"
-          quality={80}
+          quality={75}
           className={className}
           sizes={sizes}
           onLoad={onLoad}

@@ -11,7 +11,7 @@ import {
   type ReactNode,
 } from "react";
 
-export const HERO_POST_INTRO_DELAY_MS = 500;
+export const HERO_POST_INTRO_DELAY_MS = 0;
 
 type RevealHeroOptions = {
   immediate?: boolean;

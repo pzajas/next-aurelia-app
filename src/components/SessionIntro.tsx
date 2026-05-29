@@ -8,8 +8,8 @@ import { useIntroReveal } from "@/lib/intro/IntroRevealContext";
 
 const STORAGE_KEY = "aurelia:intro-seen";
 const EASE = [0.22, 1, 0.36, 1] as const;
-const INTRO_MS = 4200;
-const EXIT_MS = 900;
+const INTRO_MS = 2600;
+const EXIT_MS = 650;
 
 const BRAND = "AURELIA";
 
@@ -227,11 +227,11 @@ export default function SessionIntro() {
               <motion.span
                 key={`${char}-${index}`}
                 className="inline-block"
-                initial={{ opacity: 0, y: 28, filter: "blur(6px)" }}
+                initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
                 animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                 transition={{
-                  delay: 0.52 + index * 0.07,
-                  duration: 0.95,
+                  delay: 0.18 + index * 0.045,
+                  duration: 0.75,
                   ease: EASE,
                 }}
               >
@@ -241,18 +241,19 @@ export default function SessionIntro() {
           </h1>
 
           <motion.p
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.15, duration: 1, ease: EASE }}
+            transition={{ delay: 0.55, duration: 0.7, ease: EASE }}
             className="mt-5 font-serif text-[clamp(1rem,2.4vw,1.35rem)] font-light italic text-white/72"
           >
             {t(copy.hero.tagline)}
           </motion.p>
 
+          {/* LCP on first visit — opacity 1 from first paint, light Y settle */}
           <motion.p
-            initial={{ opacity: 0, y: 8 }}
+            initial={{ opacity: 1, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.35, duration: 0.9, ease: EASE }}
+            transition={{ delay: 0.35, duration: 0.55, ease: EASE }}
             className="mt-3 font-sans text-[12px] uppercase tracking-[0.46em] text-white/38"
           >
             {t(copy.intro.atelier)}

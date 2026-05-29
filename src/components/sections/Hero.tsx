@@ -17,10 +17,10 @@ export default function Hero() {
   const reveal = imageLoaded && !deferHeroEntrance;
 
   useEffect(() => {
-    if (imageLoaded && !deferHeroEntrance) {
+    if (reveal) {
       setMediaReady(true);
     }
-  }, [imageLoaded, deferHeroEntrance]);
+  }, [reveal]);
 
   return (
     <section
@@ -31,9 +31,11 @@ export default function Hero() {
         <HeroCinematicPortrait
           src={media.hero.src}
           alt="Aurelia"
+          visible={imageLoaded}
           reveal={reveal}
           onLoad={() => setImageLoaded(true)}
           className="object-cover object-[60%_center] grayscale contrast-[1.06] brightness-[1.02]"
+          sizes="(max-width: 768px) 100vw, 725px"
         />
       </div>
 
@@ -45,9 +47,9 @@ export default function Hero() {
           priority
           loading="eager"
           fetchPriority="high"
-          quality={80}
+          quality={75}
           className="object-contain object-[72%_center] grayscale contrast-[1.06] brightness-[1.02]"
-          sizes="(max-width: 1200px) min(100vw, 1200px), 725px"
+          sizes="(max-width: 768px) 100vw, 725px"
           onLoad={() => setImageLoaded(true)}
         />
       </div>

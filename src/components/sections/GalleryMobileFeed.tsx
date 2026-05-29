@@ -2,8 +2,7 @@
 
 import {
   GALLERY_FILTER_REST,
-  GALLERY_FILTER_SETTLE_IN,
-  GALLERY_IMAGE_SCALE_FROM,
+  GALLERY_IMAGE_HOLD,
   GALLERY_IMAGE_TAP,
   GALLERY_MOBILE,
   galleryImageTransition,
@@ -49,21 +48,14 @@ function MobilePhotoTile({
   const inView = useInView(ref, inViewOptions);
   const reduced = Boolean(useReducedMotion());
 
-  const hidden = reduced
-    ? { opacity: 0 }
-    : {
-        opacity: 0,
-        scale: GALLERY_IMAGE_SCALE_FROM,
-        filter: GALLERY_FILTER_SETTLE_IN,
-      };
-
-  const shown = reduced
-    ? { opacity: 1 }
-    : {
-        opacity: 1,
-        scale: 1,
-        filter: GALLERY_FILTER_REST,
-      };
+  const hold = reduced
+    ? { opacity: 1, scale: 1, filter: GALLERY_FILTER_REST }
+    : GALLERY_IMAGE_HOLD;
+  const shown = {
+    opacity: 1,
+    scale: 1,
+    filter: GALLERY_FILTER_REST,
+  };
 
   const open = () => {
     const asset = lookupMedia(tile.src);
@@ -88,9 +80,11 @@ function MobilePhotoTile({
         ref={ref}
         className="relative aspect-[4/5] will-change-[transform,filter,opacity]"
         style={{ transformOrigin: "center 42%" }}
-        initial={hidden}
-        animate={inView ? shown : hidden}
-        transition={galleryImageTransition(reduced)}
+        initial={false}
+        animate={inView ? shown : hold}
+        transition={
+          inView ? galleryImageTransition(reduced) : { duration: 0 }
+        }
       >
         <Image
           src={tile.src}
@@ -101,7 +95,7 @@ function MobilePhotoTile({
           priority={tile.priority}
           className="object-cover"
           style={{ objectPosition: tile.objectPosition }}
-          sizes="100vw"
+            sizes="(max-width: 768px) 100vw, 640px"
         />
       </motion.div>
     </motion.button>

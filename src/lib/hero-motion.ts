@@ -13,11 +13,16 @@ export const HERO_FILTER_TAP =
 /** Slightly tighter zoom — slower settle reads more lens-like than a big punch */
 export const HERO_IMAGE_SCALE_FROM = 1.028;
 
-/** Scale lingers; opacity/filter resolve first */
+/** LCP-friendly: opacity stays 1 — only filter/scale animate */
 export const HERO_IMAGE_ENTRANCE = {
-  opacity: { duration: 2.15, ease: EASE_CINEMATIC },
   filter: { duration: 2.35, ease: EASE_CINEMATIC },
   scale: { duration: 3.2, ease: [0.14, 0.92, 0.2, 1] as const },
+} as const;
+
+export const HERO_IMAGE_HOLD = {
+  scale: HERO_IMAGE_SCALE_FROM,
+  filter: HERO_FILTER_SETTLE_IN,
+  opacity: 1,
 } as const;
 
 /** Top-to-bottom on screen (edition → logo → tagline → subtitle) */
