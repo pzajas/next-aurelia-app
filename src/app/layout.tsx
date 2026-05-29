@@ -9,6 +9,7 @@ import SessionIntro from "@/components/SessionIntro";
 const CinematicCursor = dynamic(() => import("@/components/CinematicCursor"));
 const CookieConsent = dynamic(() => import("@/components/CookieConsent"));
 import { IntroRevealProvider } from "@/lib/intro/IntroRevealContext";
+import { SKIP_INTRO } from "@/lib/intro/skip-intro";
 import { LocaleProvider } from "@/lib/i18n/LocaleProvider";
 import { copy, t } from "@/lib/i18n";
 import { defaultLocale } from "@/lib/i18n/types";
@@ -57,12 +58,14 @@ export default function RootLayout({
         <HeroPreloadLinks />
       </head>
       <body className="min-h-full overflow-x-clip" suppressHydrationWarning>
-        <Script id="aurelia-session-intro" strategy="beforeInteractive">
-          {INTRO_BOOT_SCRIPT}
-        </Script>
+        {!SKIP_INTRO && (
+          <Script id="aurelia-session-intro" strategy="beforeInteractive">
+            {INTRO_BOOT_SCRIPT}
+          </Script>
+        )}
         <LocaleProvider initialLocale={defaultLocale}>
           <IntroRevealProvider>
-            <SessionIntro />
+            {!SKIP_INTRO && <SessionIntro />}
             <CinematicCursor />
             <AppChrome>{children}</AppChrome>
             <CookieConsent />
