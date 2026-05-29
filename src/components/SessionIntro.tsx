@@ -240,7 +240,7 @@ export default function SessionIntro() {
           </div>
 
           <p
-            className="absolute bottom-6 font-sans text-[12px] uppercase tracking-[0.5em] text-white/22 md:bottom-8"
+            className="absolute bottom-6 hidden font-sans text-[12px] uppercase tracking-[0.5em] text-white/22 md:block md:bottom-8"
             aria-hidden
           >
             {t(copy.gallery.volume)}
