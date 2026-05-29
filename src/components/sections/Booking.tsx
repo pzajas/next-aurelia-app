@@ -1,10 +1,10 @@
 "use client";
 
-import Image from "next/image";
-import { motion } from "framer-motion";
 import CinematicSurface from "@/components/CinematicSurface";
-import { media } from "@/lib/media";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
+import { media } from "@/lib/media";
+import { motion } from "framer-motion";
+import Image from "next/image";
 
 export default function Booking() {
   const { t, copy } = useLocale();
@@ -23,7 +23,10 @@ export default function Booking() {
             style={{ objectPosition: "66% 52%" }}
             sizes="100vw"
           />
-          <div className="pointer-events-none absolute inset-y-0 left-0 w-[62%] bg-black/72" aria-hidden />
+          <div
+            className="pointer-events-none absolute inset-y-0 left-0 w-[62%] bg-black/72"
+            aria-hidden
+          />
           <div
             className="pointer-events-none absolute inset-y-0 left-[62%] w-16 bg-gradient-to-r from-black/62 to-transparent"
             aria-hidden

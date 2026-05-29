@@ -14,7 +14,7 @@ const leftLinks = [
 const rightLinks = [
   { key: "archive" as const, href: "#works" },
   { key: "stories" as const, href: "#opinie" },
-  { key: "contact" as const, href: "#contact" },
+  { key: "contact" as const, href: "#footer" },
 ];
 
 function FooterNavLink({ href, label }: { href: string; label: string }) {
@@ -54,8 +54,9 @@ export default function Footer() {
   return (
     <CinematicSurface
       as="footer"
+      id="footer"
       intenseGrain
-      className="z-[2] text-white"
+      className="z-[2] scroll-mt-[var(--site-header-height,68px)] text-white"
       contentClassName="mx-auto max-w-6xl pb-10 pt-16 md:pb-12 md:pt-20 relative before:absolute before:top-0 before:left-1/4 before:w-1/2 before:h-px before:bg-white/10"
     >
       <div className="relative">

@@ -30,12 +30,15 @@ function MobileNavLink({
 }: {
   href: string;
   label: string;
-  onNavigate: () => void;
+  onNavigate: (href: string) => void;
 }) {
   return (
     <a
       href={href}
-      onClick={onNavigate}
+      onClick={(e) => {
+        e.preventDefault();
+        onNavigate(href);
+      }}
       className="group block py-[clamp(0.06rem,0.55svh,0.44rem)]"
     >
       <span
@@ -83,6 +86,7 @@ type MobileNavOverlayProps = {
   ctaSubline: string;
   editionMark: string;
   onClose: () => void;
+  onNavigate: (href: string) => void;
   onExitComplete?: () => void;
 };
 
@@ -93,6 +97,7 @@ export default function MobileNavOverlay({
   ctaSubline,
   editionMark,
   onClose,
+  onNavigate,
   onExitComplete,
 }: MobileNavOverlayProps) {
   const [mounted, setMounted] = useState(false);
@@ -366,7 +371,7 @@ export default function MobileNavOverlay({
                         <MobileNavLink
                           href={item.href}
                           label={item.label}
-                          onNavigate={onClose}
+                          onNavigate={onNavigate}
                         />
                       </motion.li>
                     ))}
@@ -377,8 +382,11 @@ export default function MobileNavOverlay({
                     className="mt-[clamp(0.85rem,3svh,2.2rem)] border-t border-white/8 pt-[clamp(0.7rem,2.2svh,1.25rem)]"
                   >
                     <a
-                      href="#contact"
-                      onClick={onClose}
+                      href="#booking"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        onNavigate("#booking");
+                      }}
                       className={cn(
                         "group inline-flex flex-col items-start",
                         p.fgCta

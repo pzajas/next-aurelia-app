@@ -3,8 +3,8 @@
 import { useLocale } from "@/lib/i18n/LocaleProvider";
 import { cn } from "@/lib/utils";
 import { motion, useInView } from "framer-motion";
-import Image from "next/image";
 import Link from "next/link";
+import { MobileDisciplinesList } from "@/components/sections/MobileDisciplines";
 import { useEffect, useRef, useState } from "react";
 
 const easeReveal = [0.22, 1, 0.36, 1] as const;
@@ -73,45 +73,20 @@ export default function Services() {
         </header>
 
         <div>
-          <div className="md:hidden border-t border-editorial/80">
-            {services.map((service, index) => (
-              <motion.article
-                key={`mobile-${service.id}`}
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-8% 0px" }}
-                transition={{ duration: 0.8, delay: index * 0.06, ease: easeReveal }}
-                className="mb-4 grid grid-cols-[minmax(0,1fr)_42%] gap-3 border-b border-editorial/80 last:mb-0"
-              >
-                <div className="px-0 py-6">
-                  <p className="font-serif text-[3rem] font-light leading-[0.9] tracking-[0.02em] text-foreground">
-                    {service.id}
-                  </p>
-                  <h3 className="mt-2 font-serif text-[1.95rem] font-light leading-[0.95] tracking-[-0.01em] text-foreground">
-                    {service.name}
-                  </h3>
-                  <p className={cn(microLabelClass, "mt-4 max-w-[14rem] text-foreground/60")}>
-                    {service.desc}
-                  </p>
-                </div>
-                <div className="relative min-h-[148px] overflow-hidden">
-                  <Image
-                    src={mobileDisciplineImages[index] ?? mobileDisciplineImages[0]}
-                    alt={service.name}
-                    fill
-                    className="object-cover grayscale object-[72%_35%]"
-                    sizes="42vw"
-                  />
-                  <div
-                    className="pointer-events-none absolute inset-y-0 left-0 w-14 bg-gradient-to-r from-layer-1 via-layer-1/65 to-transparent"
-                    aria-hidden
-                  />
-                </div>
-              </motion.article>
-            ))}
-          </div>
+          <MobileDisciplinesList
+            items={services.map((service, index) => ({
+              id: service.id,
+              name: service.name,
+              desc: service.desc,
+              imageSrc:
+                mobileDisciplineImages[index] ?? mobileDisciplineImages[0],
+            }))}
+          />
 
-          <div className="relative hidden md:block" onMouseLeave={() => setHoveredId(null)}>
+          <div
+            className="relative hidden md:block"
+            onMouseLeave={() => setHoveredId(null)}
+          >
             {services.map((service, index) => {
               const rowDelay = 0.32 + index * STAGGER;
               const isHovered = hoveredId === service.id;
@@ -225,16 +200,26 @@ export default function Services() {
           >
             <div className="relative flex md:hidden items-center pt-1">
               <div className="flex flex-1 items-center justify-center py-4 text-center">
-                <p className={cn(microLabelClass, "translate-y-[2px] text-foreground/65")}>
+                <p
+                  className={cn(
+                    microLabelClass,
+                    "translate-y-[2px] text-foreground/65",
+                  )}
+                >
                   {t(copy.disciplines.atelierMenu.link)}
                 </p>
               </div>
 
               <Link
-                href="#contact"
+                href="#booking"
                 className="group flex flex-1 items-center justify-center gap-2 py-4 text-center"
               >
-                <span className={cn(microLabelClass, "translate-y-[2px] text-foreground/60")}>
+                <span
+                  className={cn(
+                    microLabelClass,
+                    "translate-y-[2px] text-foreground/60",
+                  )}
+                >
                   Poznaj usługi
                 </span>
                 <span
@@ -275,7 +260,7 @@ export default function Services() {
               />
 
               <Link
-                href="#contact"
+                href="#booking"
                 className="group flex cursor-pointer items-center justify-between gap-5 overflow-visible md:min-w-[230px] md:justify-end md:py-10 md:pl-10 md:pr-4 lg:min-w-[290px] lg:pl-14"
               >
                 <span

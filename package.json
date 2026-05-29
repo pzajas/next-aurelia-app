@@ -6,6 +6,7 @@
     "dev": "next dev --port 3000",
     "cache:images": "node scripts/clear-next-image-cache.mjs",
     "images:avif": "node scripts/convert-images-to-avif.mjs",
+    "images:people": "node scripts/reencode-people-avif.mjs",
     "dev:fresh": "npm run cache:images && next dev --port 3000",
     "dev:reset": "node scripts/dev-reset.mjs && next dev --port 3000",
     "build": "next build",

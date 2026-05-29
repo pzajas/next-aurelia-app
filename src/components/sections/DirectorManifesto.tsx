@@ -1,102 +1,200 @@
 "use client";
 
-import CinematicSurface from "@/components/CinematicSurface";
+import {
+  MANIFESTO_TEXT,
+  getManifestoMotionScale,
+  manifestoAttributionDelay,
+  manifestoDividerDelay,
+  manifestoQuoteDelay,
+  manifestoTransition,
+  scaledDuration,
+  type ManifestoMotionScale,
+} from "@/lib/manifesto-motion";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
-import { motion, useInView, useScroll, useTransform } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { cn } from "@/lib/utils";
+import {
+  ScrollVelocityProvider,
+  useScrollVelocityReveal,
+} from "@/lib/useScrollVelocity";
+import { motion, useInView, useReducedMotion } from "framer-motion";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
-const easeLuxury = [0.22, 1, 0.36, 1] as const;
+function SubtleReveal({
+  children,
+  delay,
+  duration,
+  className,
+  active,
+  driftY = MANIFESTO_TEXT.driftY,
+  drift = true,
+}: {
+  children: ReactNode;
+  delay: number;
+  duration: number;
+  className?: string;
+  active: boolean;
+  driftY?: number;
+  drift?: boolean;
+}) {
+  const reduced = Boolean(useReducedMotion());
+  const hidden = reduced
+    ? { opacity: 0 }
+    : drift
+      ? { opacity: 0, y: driftY }
+      : { opacity: 0 };
+  const shown = reduced
+    ? { opacity: 1 }
+    : drift
+      ? { opacity: 1, y: 0 }
+      : { opacity: 1 };
 
-const itemReveal = {
-  hidden: {
-    opacity: 0,
-    y: 14,
-  },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 1.35, ease: easeLuxury },
-  },
-};
+  return (
+    <motion.div
+      initial={hidden}
+      animate={active ? shown : hidden}
+      transition={manifestoTransition(active ? delay : 0, duration, reduced)}
+      className={cn("will-change-[transform,opacity]", className)}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
-export default function DirectorManifesto() {
+function ManifestoQuote({
+  lines,
+  active,
+  scale,
+}: {
+  lines: string[];
+  active: boolean;
+  scale: ManifestoMotionScale;
+}) {
+  const reduced = Boolean(useReducedMotion());
+  const hidden = reduced
+    ? { opacity: 0 }
+    : { opacity: 0, y: MANIFESTO_TEXT.driftY };
+  const shown = reduced ? { opacity: 1 } : { opacity: 1, y: 0 };
+
+  return (
+    <motion.blockquote
+      initial={hidden}
+      animate={active ? shown : hidden}
+      transition={manifestoTransition(
+        active ? manifestoQuoteDelay(scale) : 0,
+        scaledDuration(MANIFESTO_TEXT.quote.duration, scale),
+        reduced
+      )}
+      className="font-serif text-[clamp(1.22rem,5.1vw,2.35rem)] font-light italic leading-[1.52] tracking-[0.01em] text-[rgb(255_255_255/0.9)] will-change-[transform,opacity] md:leading-[1.45]"
+    >
+      {lines.map((line) => (
+        <span key={line} className="block">
+          {line}
+        </span>
+      ))}
+    </motion.blockquote>
+  );
+}
+
+function ManifestoContent() {
   const { t, tLines, copy } = useLocale();
   const sectionRef = useRef<HTMLElement>(null);
-  const inView = useInView(sectionRef, { once: true, margin: "-12% 0px" });
+  const inView = useInView(sectionRef, { once: true, margin: "-10% 0px" });
+  const sampleRevealVelocity = useScrollVelocityReveal();
+  const reducedMotion = Boolean(useReducedMotion());
   const [entered, setEntered] = useState(false);
+  const [lockedScale, setLockedScale] = useState<ManifestoMotionScale | null>(
+    null
+  );
 
   const quoteLines = tLines(copy.manifesto.lines);
-
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"],
-  });
-  const parallaxY = useTransform(scrollYProgress, [0, 1], [12, -10]);
+  const scale =
+    lockedScale ??
+    getManifestoMotionScale(sampleRevealVelocity(), reducedMotion);
 
   useEffect(() => {
     if (inView) setEntered(true);
   }, [inView]);
 
+  useEffect(() => {
+    if (!inView || lockedScale) return;
+    setLockedScale(
+      getManifestoMotionScale(sampleRevealVelocity(), reducedMotion)
+    );
+  }, [inView, lockedScale, sampleRevealVelocity, reducedMotion]);
+
   return (
-    <CinematicSurface
+    <section
       ref={sectionRef}
-      intenseGrain
-      className="border-b border-white/10 editorial-whitespace-xl"
+      className="manifesto-section relative isolate overflow-hidden border-b border-white/10 bg-[#0a0a0a] editorial-whitespace-xl"
     >
-      <motion.div style={{ y: parallaxY }} className="px-4 py-24 md:px-10 md:py-32">
-        <div className="mx-auto max-w-3xl text-center">
-          <motion.p
-            initial={{ opacity: 0, x: -16, letterSpacing: "0.28em" }}
-            animate={
-              entered ? { opacity: 1, x: 0, letterSpacing: "0.4em" } : undefined
-            }
-            transition={{ duration: 1.2, ease: easeLuxury }}
-            className="text-[9px] md:text-[12px] font-sans uppercase text-white/40 mb-14 md:mb-16"
-          >
-            {t(copy.manifesto.label)}
-          </motion.p>
+      <div
+        className="manifesto-diagonal-light pointer-events-none absolute inset-0 z-0"
+        aria-hidden
+      />
 
-          <motion.blockquote
-            variants={{
-              visible: {
-                transition: {
-                  staggerChildren: 0.14,
-                  delayChildren: 0.2,
-                },
-              },
-            }}
-            initial="hidden"
-            animate={entered ? "visible" : "hidden"}
-            className="font-serif italic font-light text-[clamp(1.35rem,2.8vw,2.35rem)] leading-[1.45] text-white/92"
-          >
-            {quoteLines.map((line) => (
-              <motion.span
-                key={line}
-                variants={itemReveal}
-                className="block will-change-transform"
-              >
-                {line}
-              </motion.span>
-            ))}
-          </motion.blockquote>
+      <div
+        className="manifesto-mobile-grain pointer-events-none absolute inset-0 z-[1] opacity-[0.04]"
+        aria-hidden
+      />
 
-          <motion.p
-            initial={{ opacity: 0, y: 10 }}
-            animate={entered ? { opacity: 1, y: 0 } : undefined}
-            transition={{ duration: 1.1, delay: 0.72, ease: easeLuxury }}
-            className="mt-12 text-[9px] md:text-[12px] font-sans uppercase tracking-[0.3em] text-white/50 will-change-transform"
+      <div className="relative z-[2] flex min-h-[88svh] flex-col justify-center px-6 py-28 md:min-h-0 md:px-10 md:py-32">
+        <div className="mx-auto w-full max-w-[22rem] text-center md:max-w-3xl">
+          <SubtleReveal
+            delay={MANIFESTO_TEXT.label.delay}
+            duration={scaledDuration(MANIFESTO_TEXT.label.duration, scale)}
+            active={entered}
+            driftY={MANIFESTO_TEXT.labelDriftY}
+            className="mb-12 md:mb-16"
           >
-            {t(copy.manifesto.attribution)}
-          </motion.p>
+            <p className="font-sans text-[9px] uppercase tracking-[0.42em] text-white/38 md:text-[12px] md:tracking-[0.4em]">
+              {t(copy.manifesto.label)}
+            </p>
+          </SubtleReveal>
 
-          <motion.div
-            initial={{ width: 0, opacity: 0 }}
-            animate={entered ? { width: 48, opacity: 1 } : undefined}
-            transition={{ duration: 1.15, delay: 0.88, ease: easeLuxury }}
-            className="h-px bg-white/20 mx-auto mt-14"
-          />
+          <ManifestoQuote lines={quoteLines} active={entered} scale={scale} />
+
+          <SubtleReveal
+            delay={manifestoAttributionDelay(scale)}
+            duration={scaledDuration(
+              MANIFESTO_TEXT.attribution.duration,
+              scale
+            )}
+            active={entered}
+            drift={false}
+            className="mt-14"
+          >
+            <p className="font-sans text-[9px] uppercase tracking-[0.34em] text-white/44 md:text-[12px] md:tracking-[0.3em]">
+              {t(copy.manifesto.attribution)}
+            </p>
+          </SubtleReveal>
+
+          <div className="mt-14 flex justify-center">
+            <motion.div
+              initial={reducedMotion ? false : { opacity: 0 }}
+              animate={
+                entered
+                  ? { opacity: MANIFESTO_TEXT.divider.opacity }
+                  : { opacity: 0 }
+              }
+              transition={manifestoTransition(
+                entered ? manifestoDividerDelay(scale) : 0,
+                scaledDuration(MANIFESTO_TEXT.divider.duration, scale),
+                reducedMotion
+              )}
+              className="h-px w-12 bg-white/22 will-change-[opacity]"
+              aria-hidden
+            />
+          </div>
         </div>
-      </motion.div>
-    </CinematicSurface>
+      </div>
+    </section>
+  );
+}
+
+export default function DirectorManifesto() {
+  return (
+    <ScrollVelocityProvider>
+      <ManifestoContent />
+    </ScrollVelocityProvider>
   );
 }

@@ -8,11 +8,7 @@ import {
     resolveHeaderHeight,
 } from "@/lib/header-metrics";
 import { useLocale } from "@/lib/i18n/LocaleProvider";
-import {
-    NAV_GLASS_DARK,
-    navChrome,
-    resolveNavChromeTheme,
-} from "@/lib/nav-glass";
+import { NAV_GLASS_DARK, resolveNavChromeTheme } from "@/lib/nav-glass";
 import {
     NAV_EASE,
     getMobileNavCloseDurationSec,
@@ -24,6 +20,7 @@ import {
     releaseNavVisual,
     unlockScroll,
 } from "@/lib/scroll-lock";
+import { parseSectionId, scrollToSection } from "@/lib/scroll-to-section";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -62,7 +59,7 @@ const navItems = [
   { key: "disciplines" as const, href: "#services", id: "services" },
   { key: "archive" as const, href: "#works", id: "works" },
   { key: "stories" as const, href: "#opinie", id: "opinie" },
-  { key: "contact" as const, href: "#contact", id: "contact" },
+  { key: "contact" as const, href: "#footer", id: "footer" },
 ];
 
 const sectionIds = navItems.map((item) => item.id);
@@ -128,7 +125,7 @@ function RequestAppointmentCta({
   if (variant === "desktop-bar") {
     return (
       <a
-        href="#contact"
+        href="#booking"
         onClick={onClick}
         data-cursor-cta
         className={cn(
@@ -150,7 +147,7 @@ function RequestAppointmentCta({
 
   return (
     <a
-      href="#contact"
+      href="#booking"
       onClick={onClick}
       className={cn(
         "inline-flex flex-col items-center opacity-100 transition-opacity duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:opacity-80",
@@ -184,6 +181,7 @@ export default function SiteHeader() {
   const [isDesktop, setIsDesktop] = useState(true);
 
   const savedScrollYRef = useRef(0);
+  const pendingSectionIdRef = useRef<string | null>(null);
   const headerColorReleasedRef = useRef(false);
   const closeFallbackRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const closeFinishFallbackRef = useRef<ReturnType<typeof setTimeout> | null>(
@@ -219,11 +217,21 @@ export default function SiteHeader() {
     releaseNavVisual();
   }, []);
 
+  const flushPendingSectionScroll = useCallback(() => {
+    const sectionId = pendingSectionIdRef.current;
+    if (!sectionId) return;
+    pendingSectionIdRef.current = null;
+    requestAnimationFrame(() => {
+      scrollToSection(sectionId);
+    });
+  }, []);
+
   const finishMenuClose = useCallback(() => {
     clearCloseTimers();
     beginHeaderColorRelease();
     unlockScroll();
-  }, [beginHeaderColorRelease, clearCloseTimers]);
+    flushPendingSectionScroll();
+  }, [beginHeaderColorRelease, clearCloseTimers, flushPendingSectionScroll]);
 
   const closeMenu = useCallback(() => {
     clearCloseTimers();
@@ -267,6 +275,16 @@ export default function SiteHeader() {
     else openMenu();
   }, [menuOpen, closeMenu, openMenu]);
 
+  const handleMobileNavNavigate = useCallback(
+    (href: string) => {
+      const sectionId = parseSectionId(href);
+      if (!sectionId) return;
+      pendingSectionIdRef.current = sectionId;
+      closeMenu();
+    },
+    [closeMenu]
+  );
+
   useLayoutEffect(() => {
     if (menuOpen && !isScrollLocked()) lockScroll();
   }, [menuOpen]);
@@ -299,9 +317,23 @@ export default function SiteHeader() {
   }, [activeId]);
 
   useEffect(() => {
+    const readScrollY = () => {
+      const root = document.querySelector<HTMLElement>(".site-shell");
+      const fromRect = root
+        ? Math.round(Math.max(0, -root.getBoundingClientRect().top))
+        : 0;
+      const fromWindow = Math.round(
+        window.scrollY ||
+          document.documentElement.scrollTop ||
+          document.body.scrollTop ||
+          0,
+      );
+      return Math.max(fromRect, fromWindow);
+    };
+
     const onScroll = () => {
       if (isScrollLocked()) return;
-      setScrolled(window.scrollY > SCROLL_THRESHOLD);
+      setScrolled(readScrollY() > SCROLL_THRESHOLD);
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -402,9 +434,6 @@ export default function SiteHeader() {
     scrollYForChrome,
     SCROLL_THRESHOLD,
   );
-  const pageChrome = navChrome[pageChromeTheme];
-  const pageHeaderSurface =
-    pageChromeTheme === "light" ? pageChrome.header : null;
   const pageFgColor = pageChromeTheme === "light" ? "#141210" : "#ffffff";
   const headerFgColor = menuHeaderDark
     ? "#ffffff"
@@ -426,21 +455,8 @@ export default function SiteHeader() {
     ease: NAV_EASE,
     delay: navTimings.headerSurfaceCloseDelay,
   };
-  const headerSurfaceTransition =
-    "background 480ms cubic-bezier(0.22, 1, 0.36, 1), backdrop-filter 480ms cubic-bezier(0.22, 1, 0.36, 1), border-color 480ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 480ms cubic-bezier(0.22, 1, 0.36, 1)";
-  const headerSurfaceStyle = {
-    background: pageHeaderSurface?.background ?? "transparent",
-    backdropFilter: pageHeaderSurface?.backdropFilter ?? "none",
-    WebkitBackdropFilter: pageHeaderSurface?.WebkitBackdropFilter ?? "none",
-    borderBottom: pageHeaderSurface?.borderBottom ?? "1px solid transparent",
-    boxShadow: pageHeaderSurface?.boxShadow ?? "none",
-  };
-  const mobilePageGrainOpacity =
-    pageChromeTheme === "light" && pageHeaderSurface ? 0.028 : 0;
-
   const desktopHeaderVisible = isDesktop && scrolled && !menuHeaderDark;
-  const mobileHeaderVisible =
-    !isDesktop && scrolled && !menuHeaderDark && Boolean(pageHeaderSurface);
+  const mobileGlassVisible = !isDesktop && scrolled && !menuHeaderDark;
   const headerHeight = resolveHeaderHeight(isDesktop, scrolled);
   const logoScale = 1;
   const underlineBottom = isDesktop ? (desktopHeaderVisible ? 11 : 16) : 14;
@@ -506,13 +522,14 @@ export default function SiteHeader() {
         />
 
         <motion.div
-          className="pointer-events-none absolute inset-0 z-[1] will-change-[opacity,backdrop-filter] md:hidden"
+          className="pointer-events-none absolute inset-0 z-[1] md:hidden"
           initial={false}
-          animate={{ opacity: mobileHeaderVisible ? 1 : 0 }}
+          animate={{ opacity: mobileGlassVisible ? 1 : 0 }}
           transition={headerSurfaceOverlayTransition}
-          style={headerSurfaceStyle}
-          aria-hidden
-        />
+          aria-hidden={!mobileGlassVisible}
+        >
+          <div className="mobile-header-glass absolute inset-0" aria-hidden />
+        </motion.div>
 
         <motion.div
           className="mobile-nav-header-match pointer-events-none absolute inset-0 z-[2] md:hidden"
@@ -526,7 +543,7 @@ export default function SiteHeader() {
           className="site-header-grain pointer-events-none absolute inset-0 z-[3] md:hidden"
           initial={false}
           animate={{
-            opacity: menuHeaderDark ? 0.032 : mobilePageGrainOpacity,
+            opacity: menuHeaderDark ? 0.032 : mobileGlassVisible ? 0.028 : 0,
           }}
           transition={headerSurfaceOverlayTransition}
           aria-hidden
@@ -639,6 +656,7 @@ export default function SiteHeader() {
         ctaSubline={t(copy.nav.ctaSubline)}
         editionMark={t(copy.nav.editionMark)}
         onClose={closeMenu}
+        onNavigate={handleMobileNavNavigate}
         onExitComplete={handleMenuExitComplete}
       />
     </>

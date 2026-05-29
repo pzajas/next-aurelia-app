@@ -116,22 +116,14 @@ export const copy = {
       "MANIFESTO — ARTISTIC DIRECTION"
     ),
     lines: [
-      b(
-        "„Włosy nie są ozdobą. Są deklaracją.",
-        "“Hair is not decoration. It is declaration."
-      ),
+      b("„Włosy nie są ozdobą.", "“Hair is not decoration."),
+      b("Są deklaracją.", "It is declaration."),
       b(
         "Każda forma jest świadomym wyborem —",
-        "Every strand is an architectural decision —"
+        "Every form is a conscious choice —"
       ),
-      b(
-        "między tym, kim jesteś,",
-        "a negotiation between the self you are"
-      ),
-      b(
-        "a tym, kim się stajesz.”",
-        "and the self you are becoming.”"
-      ),
+      b("między tym, kim jesteś,", "between who you are,"),
+      b("a tym, kim się stajesz.”", "and who you are becoming.”"),
     ],
     attribution: b(
       "— Sofia Renault, Dyrektorka Artystyczna",
